@@ -27,9 +27,9 @@
         "expo-splash-screen",
         {
           "image": "./assets/images/myntra.jpg",
-          "imageWidth": 200,
+          "imageWidth": 180,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#ff3f6c"
         }
       ],
       "expo-secure-store"

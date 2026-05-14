@@ -111,8 +111,8 @@ export default function Home() {
     const fetchproduct = async () => {
       try {
         setIsLoading(true);
-        const cat = await axios.get("https://myntra-clone-xj36.onrender.com/category");
-        const product = await axios.get("https://myntra-clone-xj36.onrender.com/product");
+        const cat = await axios.get("http://localhost:5000/category");
+        const product = await axios.get("http://localhost:5000/product");
         setcategories(cat.data);
         setproduct(product.data);
       } catch (error) {
@@ -127,17 +127,22 @@ export default function Home() {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.logo}>MYNTRA</Text>
+        <Image
+          source={require("@/assets/images/myntra.jpg")}
+          style={styles.logoImage}
+          resizeMode="contain"
+        />
         <TouchableOpacity style={styles.searchButton}>
-          <Search size={24} color="#3e3e3e" />
+          <Search size={24} color="#fff" />
         </TouchableOpacity>
       </View>
 
       <Image
         source={{
-          uri: "https://images.unsplash.com/photo-1445205170230-053b83016050?w=800&auto=format&fit=crop",
+          uri: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&auto=format&fit=crop",
         }}
         style={styles.banner}
+        resizeMode="cover"
       />
 
       <View style={styles.section}>
@@ -249,11 +254,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 15,
-    paddingTop: 50,
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 12,
     backgroundColor: "#fff",
-    borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
+    borderBottomWidth: 0,
+  },
+  logoImage: {
+    width: 120,
+    height: 40,
   },
   emptyText: {
     textAlign: "center",
@@ -268,61 +277,79 @@ const styles = StyleSheet.create({
   },
   searchButton: {
     padding: 8,
+    backgroundColor: "transparent",
+    borderRadius: 8,
   },
   banner: {
     width: "100%",
-    height: 200,
-    resizeMode: "cover",
+    height: 220,
+    backgroundColor: "#f0f0f0",
   },
   section: {
-    padding: 15,
+    padding: 16,
+    paddingTop: 20,
   },
   sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 15,
+    marginBottom: 18,
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: "bold",
-    color: "#3e3e3e",
+    fontWeight: "800",
+    color: "#1a1a1a",
+    letterSpacing: 0.5,
   },
   viewAll: {
     flexDirection: "row",
     alignItems: "center",
+    paddingVertical: 5,
   },
   viewAllText: {
     color: "#ff3f6c",
     marginRight: 5,
+    fontSize: 13,
+    fontWeight: "600",
   },
   categoriesScroll: {
     marginHorizontal: -15,
   },
   categoryCard: {
-    width: 100,
+    width: 110,
     marginHorizontal: 8,
+    alignItems: "center",
   },
   categoryImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    width: 110,
+    height: 110,
+    borderRadius: 55,
+    backgroundColor: "#f5f5f5",
+    borderWidth: 2,
+    borderColor: "#ff3f6c",
   },
   categoryName: {
     textAlign: "center",
-    marginTop: 8,
-    fontSize: 14,
+    marginTop: 10,
+    fontSize: 13,
     color: "#3e3e3e",
+    fontWeight: "500",
   },
   dealsScroll: {
     marginHorizontal: -15,
   },
   dealCard: {
-    width: 280,
-    height: 150,
-    marginHorizontal: 8,
-    borderRadius: 10,
+    width: 300,
+    height: 180,
+    marginHorizontal: 10,
+    borderRadius: 12,
     overflow: "hidden",
+    backgroundColor: "#f0f0f0",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 8,
   },
   dealImage: {
     width: "100%",
@@ -333,12 +360,12 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: "rgba(0,0,0,0.4)",
-    padding: 15,
+    backgroundColor: "rgba(63, 63, 63, 0.85)",
+    padding: 18,
   },
   dealTitle: {
     color: "#fff",
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "bold",
   },
   productsGrid: {
@@ -349,35 +376,42 @@ const styles = StyleSheet.create({
   productCard: {
     width: "48%",
     marginHorizontal: "1%",
-    marginBottom: 15,
+    marginBottom: 18,
     backgroundColor: "#fff",
-    borderRadius: 10,
+    borderRadius: 12,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: 3,
     },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
+    shadowOpacity: 0.12,
+    shadowRadius: 4,
+    elevation: 6,
+    overflow: "hidden",
   },
   productImage: {
     width: "100%",
-    height: 200,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
+    height: 220,
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+    backgroundColor: "#f9f9f9",
   },
   productInfo: {
-    padding: 10,
+    padding: 12,
   },
   brandName: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 2,
+    fontSize: 12,
+    color: "#888",
+    marginBottom: 4,
+    fontWeight: "500",
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
   },
   productName: {
-    fontSize: 16,
-    marginBottom: 5,
+    fontSize: 14,
+    marginBottom: 8,
+    color: "#1a1a1a",
+    fontWeight: "600",
   },
   priceRow: {
     flexDirection: "row",
@@ -386,13 +420,13 @@ const styles = StyleSheet.create({
   productPrice: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#3e3e3e",
+    color: "#1a1a1a",
     marginRight: 8,
   },
   discount: {
-    fontSize: 14,
+    fontSize: 12,
     color: "#ff3f6c",
-    fontWeight: "500",
+    fontWeight: "700",
   },
   loader: {
     marginTop: 50,

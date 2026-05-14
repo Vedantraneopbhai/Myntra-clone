@@ -131,7 +131,7 @@ export default function TabTwoScreen() {
     const fetchproduct = async () => {
       try {
         setIsLoading(true);
-        const cat = await axios.get("https://myntra-clone-xj36.onrender.com/category");
+        const cat = await axios.get("http://localhost:5000/category");
         setcategories(cat.data);
       } catch (error) {
         console.log(error);
@@ -197,7 +197,7 @@ export default function TabTwoScreen() {
         style={styles.productCard}
         onPress={() => router.push(`/product/${product._id}`)}
       >
-        <Image source={{ uri: product.images[0] }} style={styles.productImage} />
+        <Image source={{ uri: product.images[0] }} style={styles.productImage} resizeMode="cover" />
         <View style={styles.productInfo}>
           <Text style={styles.brandName}>{product.brand}</Text>
           <Text style={styles.productName}>{product.name}</Text>
@@ -472,7 +472,6 @@ const styles = StyleSheet.create({
   productImage: {
     width: "100%",
     height: 200,
-    resizeMode: "cover",
   },
   productInfo: {
     padding: 10,

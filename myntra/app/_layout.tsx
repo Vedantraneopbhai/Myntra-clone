@@ -8,6 +8,7 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
+import { Platform } from "react-native";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -24,7 +25,12 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (loaded) {
-      SplashScreen.hideAsync();
+      // Show splash screen for longer on web to make it visible
+      const delay = Platform.OS === "web" ? 1500 : 500;
+      const timer = setTimeout(() => {
+        SplashScreen.hideAsync();
+      }, delay);
+      return () => clearTimeout(timer);
     }
   }, [loaded]);
 
