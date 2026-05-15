@@ -1,7 +1,7 @@
 import {
   DarkTheme,
   DefaultTheme,
-  ThemeProvider,
+  ThemeProvider as NavThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
@@ -38,7 +38,7 @@ function AppNavigator() {
   }
 
   return (
-    <ThemeProvider value={themeMode === "dark" ? DarkTheme : DefaultTheme}>
+    <NavThemeProvider value={themeMode === "dark" ? DarkTheme : DefaultTheme}>
       <AuthProvider>
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="(tabs)" />
@@ -46,7 +46,7 @@ function AppNavigator() {
         </Stack>
         <StatusBar style={theme.statusBar} />
       </AuthProvider>
-    </ThemeProvider>
+    </NavThemeProvider>
   );
 }
 
