@@ -1,16 +1,13 @@
 import { useAuth } from "@/context/AuthContext";
+import { useTheme } from "@/context/ThemeContext";
+import { ThemeColors } from "@/constants/Theme";
 import axios from "axios";
 import { useRouter } from "expo-router";
 import { CreditCard, MapPin, Truck } from "lucide-react-native";
-import React from "react";
-import { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TextInput,
-  TouchableOpacity,
+  View, Text, StyleSheet, ScrollView,
+  TextInput, TouchableOpacity,
 } from "react-native";
 import { API_BASE_URL } from "@/constants/api";
 
@@ -18,106 +15,66 @@ export default function Checkout() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { user } = useAuth();
-  const handleplaceorder = async() => {
-    if (!user) {
-      router.push("/login");
-      return;
-    }
+  const { theme } = useTheme();
+  const styles = useMemo(() => createStyles(theme), [theme]);
+
+  const handleplaceorder = async () => {
+    if (!user) { router.push("/login"); return; }
     try {
       await axios.post(`${API_BASE_URL}/create/${user._id}`, {
         shippingAddress: "123 Main Street, Apt 4B, New York, NY, 10001",
         paymentMethod: "Card",
       });
       router.push("/orders");
-    } catch (error) {
-      console.log(error);
-    }
-
-    
+    } catch (error) { console.log(error); }
   };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Checkout</Text>
       </View>
       <ScrollView style={styles.content}>
+        {/* Shipping */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <MapPin size={24} color="#ff3f6c" />
+            <MapPin size={24} color={theme.primary} />
             <Text style={styles.sectionTitle}>Shipping Address</Text>
           </View>
           <View style={styles.form}>
-            <TextInput
-              style={styles.input}
-              placeholder="Full Name"
-              defaultValue="John Doe"
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Address Line 1"
-              defaultValue="123 Main Street"
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Address Line 2"
-              defaultValue="Apt 4B"
-            />
+            <TextInput style={styles.input} placeholder="Full Name" placeholderTextColor={theme.textPlaceholder} defaultValue="John Doe" />
+            <TextInput style={styles.input} placeholder="Address Line 1" placeholderTextColor={theme.textPlaceholder} defaultValue="123 Main Street" />
+            <TextInput style={styles.input} placeholder="Address Line 2" placeholderTextColor={theme.textPlaceholder} defaultValue="Apt 4B" />
             <View style={styles.row}>
-              <TextInput
-                style={[styles.input, styles.halfInput]}
-                placeholder="City"
-                defaultValue="New York"
-              />
-              <TextInput
-                style={[styles.input, styles.halfInput]}
-                placeholder="State"
-                defaultValue="NY"
-              />
+              <TextInput style={[styles.input, styles.halfInput]} placeholder="City" placeholderTextColor={theme.textPlaceholder} defaultValue="New York" />
+              <TextInput style={[styles.input, styles.halfInput]} placeholder="State" placeholderTextColor={theme.textPlaceholder} defaultValue="NY" />
             </View>
             <View style={styles.row}>
-              <TextInput
-                style={[styles.input, styles.halfInput]}
-                placeholder="Postal Code"
-                defaultValue="10001"
-              />
-              <TextInput
-                style={[styles.input, styles.halfInput]}
-                placeholder="Country"
-                defaultValue="United States"
-              />
+              <TextInput style={[styles.input, styles.halfInput]} placeholder="Postal Code" placeholderTextColor={theme.textPlaceholder} defaultValue="10001" />
+              <TextInput style={[styles.input, styles.halfInput]} placeholder="Country" placeholderTextColor={theme.textPlaceholder} defaultValue="United States" />
             </View>
           </View>
         </View>
-        {/* Payment Section */}
+
+        {/* Payment */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <CreditCard size={24} color="#ff3f6c" />
+            <CreditCard size={24} color={theme.primary} />
             <Text style={styles.sectionTitle}>Payment Method</Text>
           </View>
           <View style={styles.form}>
-            <TextInput
-              style={styles.input}
-              placeholder="Card Number"
-              defaultValue="**** **** **** 4242"
-            />
+            <TextInput style={styles.input} placeholder="Card Number" placeholderTextColor={theme.textPlaceholder} defaultValue="**** **** **** 4242" />
             <View style={styles.row}>
-              <TextInput
-                style={[styles.input, styles.halfInput]}
-                placeholder="Expiry Date"
-                defaultValue="12/25"
-              />
-              <TextInput
-                style={[styles.input, styles.halfInput]}
-                placeholder="CVV"
-                defaultValue="***"
-              />
+              <TextInput style={[styles.input, styles.halfInput]} placeholder="Expiry Date" placeholderTextColor={theme.textPlaceholder} defaultValue="12/25" />
+              <TextInput style={[styles.input, styles.halfInput]} placeholder="CVV" placeholderTextColor={theme.textPlaceholder} defaultValue="***" />
             </View>
           </View>
         </View>
-        {/* Order Summary */}
+
+        {/* Summary */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Truck size={24} color="#ff3f6c" />
+            <Truck size={24} color={theme.primary} />
             <Text style={styles.sectionTitle}>Order Summary</Text>
           </View>
           <View style={styles.summary}>
@@ -141,126 +98,41 @@ export default function Checkout() {
         </View>
       </ScrollView>
       <View style={styles.footer}>
-        <TouchableOpacity
-          style={styles.placeOrderButton}
-          onPress={handleplaceorder}
-        >
+        <TouchableOpacity style={styles.placeOrderButton} onPress={handleplaceorder}>
           <Text style={styles.placeOrderButtonText}>PLACE ORDER</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  header: {
-    padding: 15,
-    paddingTop: 50,
-    backgroundColor: "#fff",
-    borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#3e3e3e",
-  },
-  content: {
-    flex: 1,
-    padding: 15,
-  },
+
+const createStyles = (theme: ThemeColors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: theme.background },
+  header: { padding: 15, paddingTop: 50, backgroundColor: theme.surface, borderBottomWidth: 1, borderBottomColor: theme.border },
+  headerTitle: { fontSize: 24, fontWeight: "bold", color: theme.text },
+  content: { flex: 1, padding: 15 },
   section: {
-    marginBottom: 20,
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    padding: 15,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
+    marginBottom: 20, backgroundColor: theme.surface, borderRadius: 10, padding: 15,
+    shadowColor: "#000", shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1, shadowRadius: 3.84, elevation: 5,
   },
-  sectionHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 15,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#3e3e3e",
-    marginLeft: 10,
-  },
-  form: {
-    gap: 10,
-  },
+  sectionHeader: { flexDirection: "row", alignItems: "center", marginBottom: 15 },
+  sectionTitle: { fontSize: 18, fontWeight: "bold", color: theme.text, marginLeft: 10 },
+  form: { gap: 10 },
   input: {
-    backgroundColor: "#f5f5f5",
-    padding: 15,
-    borderRadius: 10,
-    fontSize: 16,
-    marginBottom: 10,
+    backgroundColor: theme.inputBackground, padding: 15, borderRadius: 10,
+    fontSize: 16, marginBottom: 10, color: theme.text,
   },
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  halfInput: {
-    width: "48%",
-  },
-  summary: {
-    gap: 10,
-  },
-  summaryRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingVertical: 5,
-  },
-  summaryLabel: {
-    fontSize: 16,
-    color: "#666",
-  },
-  summaryValue: {
-    fontSize: 16,
-    color: "#3e3e3e",
-  },
-  total: {
-    borderTopWidth: 1,
-    borderTopColor: "#f0f0f0",
-    marginTop: 10,
-    paddingTop: 10,
-  },
-  totalLabel: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#3e3e3e",
-  },
-  totalValue: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#ff3f6c",
-  },
-  footer: {
-    padding: 15,
-    backgroundColor: "#fff",
-    borderTopWidth: 1,
-    borderTopColor: "#f0f0f0",
-  },
-  placeOrderButton: {
-    backgroundColor: "#ff3f6c",
-    padding: 15,
-    borderRadius: 10,
-    alignItems: "center",
-  },
-  placeOrderButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
+  row: { flexDirection: "row", justifyContent: "space-between" },
+  halfInput: { width: "48%" },
+  summary: { gap: 10 },
+  summaryRow: { flexDirection: "row", justifyContent: "space-between", paddingVertical: 5 },
+  summaryLabel: { fontSize: 16, color: theme.textMuted },
+  summaryValue: { fontSize: 16, color: theme.textSecondary },
+  total: { borderTopWidth: 1, borderTopColor: theme.border, marginTop: 10, paddingTop: 10 },
+  totalLabel: { fontSize: 18, fontWeight: "bold", color: theme.text },
+  totalValue: { fontSize: 18, fontWeight: "bold", color: theme.primary },
+  footer: { padding: 15, backgroundColor: theme.surface, borderTopWidth: 1, borderTopColor: theme.border },
+  placeOrderButton: { backgroundColor: theme.primary, padding: 15, borderRadius: 10, alignItems: "center" },
+  placeOrderButtonText: { color: theme.primaryForeground, fontSize: 16, fontWeight: "bold" },
 });

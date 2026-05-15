@@ -1,7 +1,6 @@
 import {
   StyleSheet,
   Image,
-  Platform,
   View,
   Text,
   TextInput,
@@ -9,125 +8,25 @@ import {
   ScrollView,
   ActivityIndicator,
 } from "react-native";
-
-import { Collapsible } from "@/components/Collapsible";
-import { ExternalLink } from "@/components/ExternalLink";
-import ParallaxScrollView from "@/components/ParallaxScrollView";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
-import { IconSymbol } from "@/components/ui/IconSymbol";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "expo-router";
 import { Search, X } from "lucide-react-native";
 import axios from "axios";
 import { API_BASE_URL } from "@/constants/api";
-
-// const categories = [
-//   {
-//     id: 1,
-//     name: "Men",
-//     subcategories: [
-//       "T-Shirts",
-//       "Shirts",
-//       "Jeans",
-//       "Trousers",
-//       "Suits",
-//       "Activewear",
-//     ],
-//     image:
-//       "https://images.unsplash.com/photo-1617137968427-85924c800a22?w=500&auto=format&fit=crop",
-//     products: [
-//       {
-//         id: 1,
-//         name: "Casual White T-Shirt",
-//         brand: "Roadster",
-//         price: 499,
-//         discount: "60% OFF",
-//         image:
-//           "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&auto=format&fit=crop",
-//       },
-//       {
-//         id: 2,
-//         name: "Denim Jacket",
-//         brand: "Levis",
-//         price: 2499,
-//         discount: "40% OFF",
-//         image:
-//           "https://images.unsplash.com/photo-1523205771623-e0faa4d2813d?w=500&auto=format&fit=crop",
-//       },
-//     ],
-//   },
-//   {
-//     id: 2,
-//     name: "Women",
-//     subcategories: [
-//       "Dresses",
-//       "Tops",
-//       "Ethnic Wear",
-//       "Western Wear",
-//       "Activewear",
-//     ],
-//     image:
-//       "https://images.unsplash.com/photo-1618244972963-dbad0c4abf18?w=500&auto=format&fit=crop",
-//     products: [
-//       {
-//         id: 3,
-//         name: "Summer Dress",
-//         brand: "ONLY",
-//         price: 1299,
-//         discount: "50% OFF",
-//         image:
-//           "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=500&auto=format&fit=crop",
-//       },
-//     ],
-//   },
-//   {
-//     id: 3,
-//     name: "Kids",
-//     subcategories: [
-//       "Boys Clothing",
-//       "Girls Clothing",
-//       "Infants",
-//       "Toys",
-//       "School Essentials",
-//     ],
-//     image:
-//       "https://images.unsplash.com/photo-1622290291468-a28f7a7dc6a8?w=500&auto=format&fit=crop",
-//     products: [],
-//   },
-//   {
-//     id: 4,
-//     name: "Beauty",
-//     subcategories: [
-//       "Makeup",
-//       "Skincare",
-//       "Haircare",
-//       "Fragrances",
-//       "Personal Care",
-//     ],
-//     image:
-//       "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=500&auto=format&fit=crop",
-//     products: [],
-//   },
-//   {
-//     id: 5,
-//     name: "Accessories",
-//     subcategories: ["Watches", "Bags", "Jewellery", "Sunglasses", "Belts"],
-//     image:
-//       "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop",
-//     products: [],
-//   },
-// ];
+import { useTheme } from "@/context/ThemeContext";
+import { ThemeColors } from "@/constants/Theme";
 
 export default function TabTwoScreen() {
   const router = useRouter();
+  const { theme } = useTheme();
+  const styles = useMemo(() => createStyles(theme), [theme]);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(
-    null
-  );
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [categories, setcategories] = useState<any[]>([]);
+
   useEffect(() => {
     const fetchproduct = async () => {
       try {
@@ -136,46 +35,52 @@ export default function TabTwoScreen() {
         setcategories(cat.data);
       } catch (error) {
         console.log(error);
-        setIsLoading(false);
       } finally {
         setIsLoading(false);
       }
     };
     fetchproduct();
   }, []);
+
   if (isLoading) {
     return (
       <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color="#ff3f6c" />
+        <ActivityIndicator size="large" color={theme.primary} />
       </View>
     );
   }
+
   if (!categories) {
     return (
       <View style={styles.container}>
-        <Text>Categories not found</Text>
+        <Text style={styles.notFoundText}>Categories not found</Text>
       </View>
     );
   }
+
   const handleSearch = (query: string) => {
     setSearchQuery(query);
     setSelectedCategory(null);
     setSelectedSubcategory(null);
   };
+
   const clearSearch = () => {
     setSearchQuery("");
     setSelectedCategory(null);
     setSelectedSubcategory(null);
   };
+
   const handleCategorySelect = (categoryId: string) => {
     setSelectedCategory(categoryId);
     setSelectedSubcategory(null);
     setSearchQuery("");
   };
+
   const handleSubcategorySelect = (subcategoryId: string) => {
     setSelectedSubcategory(subcategoryId);
     setSearchQuery("");
   };
+
   const filtercategories = categories?.filter(
     (category: any) =>
       category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -188,9 +93,11 @@ export default function TabTwoScreen() {
           product.brand.toLowerCase().includes(searchQuery.toLowerCase())
       )
   );
+
   const selectedcategorydata = selectedCategory
     ? categories?.find((cat: any) => cat._id === selectedCategory)
     : null;
+
   const renderProducts = (products: any) => {
     if (!Array.isArray(products) || products.length === 0) {
       return (
@@ -208,7 +115,9 @@ export default function TabTwoScreen() {
       >
         <Image
           source={{
-            uri: product?.images?.[0] || "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop",
+            uri:
+              product?.images?.[0] ||
+              "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop",
           }}
           style={styles.productImage}
           resizeMode="cover"
@@ -224,6 +133,7 @@ export default function TabTwoScreen() {
       </TouchableOpacity>
     ));
   };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -232,20 +142,22 @@ export default function TabTwoScreen() {
 
       <View style={styles.searchContainer}>
         <View style={styles.searchInputContainer}>
-          <Search size={20} color="#666" style={styles.searchIcon} />
+          <Search size={20} color={theme.textMuted} style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
             placeholder="Search for products, brands and more"
+            placeholderTextColor={theme.textPlaceholder}
             value={searchQuery}
             onChangeText={handleSearch}
           />
           {searchQuery !== "" && (
             <TouchableOpacity onPress={clearSearch}>
-              <X size={20} color="#666" />
+              <X size={20} color={theme.textMuted} />
             </TouchableOpacity>
           )}
         </View>
       </View>
+
       <ScrollView style={styles.content}>
         {!selectedCategory && (
           <View style={styles.categoriesGrid}>
@@ -256,7 +168,11 @@ export default function TabTwoScreen() {
                 onPress={() => handleCategorySelect(category._id)}
               >
                 <Image
-                  source={{ uri: category?.image || "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop" }}
+                  source={{
+                    uri:
+                      category?.image ||
+                      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop",
+                  }}
                   style={styles.categoryImage}
                 />
                 <View style={styles.categoryInfo}>
@@ -289,9 +205,7 @@ export default function TabTwoScreen() {
               >
                 <Text style={styles.backButtonText}>← Back to Categories</Text>
               </TouchableOpacity>
-              <Text style={styles.categoryTitle}>
-                {selectedcategorydata.name}
-              </Text>
+              <Text style={styles.categoryTitle}>{selectedcategorydata.name}</Text>
             </View>
 
             <ScrollView
@@ -299,29 +213,27 @@ export default function TabTwoScreen() {
               showsHorizontalScrollIndicator={false}
               style={styles.subcategoriesScroll}
             >
-              {selectedcategorydata.subcategory.map(
-                (sub: any, index: any) => (
-                  <TouchableOpacity
-                    key={index}
+              {selectedcategorydata.subcategory.map((sub: any, index: any) => (
+                <TouchableOpacity
+                  key={index}
+                  style={[
+                    styles.subcategoryButton,
+                    selectedSubcategory === sub && styles.selectedSubcategory,
+                  ]}
+                  onPress={() => handleSubcategorySelect(sub)}
+                >
+                  <Text
                     style={[
-                      styles.subcategoryButton,
-                      selectedSubcategory === sub && styles.selectedSubcategory,
+                      styles.subcategoryButtonText,
+                      selectedSubcategory === sub && styles.selectedSubcategoryText,
                     ]}
-                    onPress={() => handleSubcategorySelect(sub)}
                   >
-                    <Text
-                      style={[
-                        styles.subcategoryButtonText,
-                        selectedSubcategory === sub &&
-                          styles.selectedSubcategoryText,
-                      ]}
-                    >
-                      {sub}
-                    </Text>
-                  </TouchableOpacity>
-                )
-              )}
+                    {sub}
+                  </Text>
+                </TouchableOpacity>
+              ))}
             </ScrollView>
+
             <View style={styles.productsGrid}>
               {renderProducts(selectedcategorydata?.productId)}
             </View>
@@ -332,196 +244,196 @@ export default function TabTwoScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  loaderContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#fff",
-  },
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  header: {
-    padding: 15,
-    paddingTop: 50,
-    backgroundColor: "#fff",
-    borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#3e3e3e",
-  },
-  searchContainer: {
-    padding: 15,
-    backgroundColor: "#fff",
-    borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
-  },
-  searchInputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#f5f5f5",
-    borderRadius: 10,
-    padding: 10,
-  },
-  searchIcon: {
-    marginRight: 10,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: 16,
-    color: "#3e3e3e",
-  },
-  content: {
-    flex: 1,
-  },
-  categoriesGrid: {
-    padding: 15,
-  },
-  categoryCard: {
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    marginBottom: 15,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
+const createStyles = (theme: ThemeColors) =>
+  StyleSheet.create({
+    loaderContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: theme.background,
     },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-    overflow: "hidden",
-  },
-  categoryImage: {
-    width: "100%",
-    height: 150,
-  },
-  categoryInfo: {
-    padding: 15,
-  },
-  categoryName: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#3e3e3e",
-    marginBottom: 10,
-  },
-  subcategories: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-  },
-  subcategoryTag: {
-    backgroundColor: "#f5f5f5",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 15,
-    marginRight: 8,
-    marginBottom: 8,
-  },
-  subcategoryText: {
-    fontSize: 14,
-    color: "#666",
-  },
-  categoryDetail: {
-    flex: 1,
-    padding: 15,
-  },
-  categoryHeader: {
-    marginBottom: 15,
-  },
-  backButton: {
-    marginBottom: 10,
-  },
-  backButtonText: {
-    color: "#ff3f6c",
-    fontSize: 16,
-  },
-  categoryTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#3e3e3e",
-  },
-  subcategoriesScroll: {
-    marginBottom: 15,
-  },
-  subcategoryButton: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 20,
-    backgroundColor: "#f5f5f5",
-    marginRight: 10,
-  },
-  selectedSubcategory: {
-    backgroundColor: "#ff3f6c",
-  },
-  subcategoryButtonText: {
-    fontSize: 14,
-    color: "#3e3e3e",
-  },
-  selectedSubcategoryText: {
-    color: "#fff",
-  },
-  productsGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-  },
-  productCard: {
-    width: "48%",
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    marginBottom: 15,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
+    container: {
+      flex: 1,
+      backgroundColor: theme.background,
     },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-    overflow: "hidden",
-  },
-  productImage: {
-    width: "100%",
-    height: 200,
-  },
-  noProductsState: {
-    width: "100%",
-    paddingVertical: 20,
-    alignItems: "center",
-  },
-  noProductsText: {
-    color: "#666",
-    fontSize: 14,
-  },
-  productInfo: {
-    padding: 10,
-  },
-  brandName: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 4,
-  },
-  productName: {
-    fontSize: 16,
-    color: "#3e3e3e",
-    marginBottom: 8,
-  },
-  priceRow: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  price: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#3e3e3e",
-    marginRight: 8,
-  },
-  discount: {
-    fontSize: 14,
-    color: "#ff3f6c",
-  },
-});
+    notFoundText: {
+      color: theme.text,
+      textAlign: "center",
+      marginTop: 40,
+    },
+    header: {
+      padding: 15,
+      paddingTop: 50,
+      backgroundColor: theme.surface,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.border,
+    },
+    headerTitle: {
+      fontSize: 24,
+      fontWeight: "bold",
+      color: theme.text,
+    },
+    searchContainer: {
+      padding: 15,
+      backgroundColor: theme.surface,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.border,
+    },
+    searchInputContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: theme.inputBackground,
+      borderRadius: 10,
+      padding: 10,
+    },
+    searchIcon: {
+      marginRight: 10,
+    },
+    searchInput: {
+      flex: 1,
+      fontSize: 16,
+      color: theme.text,
+    },
+    content: {
+      flex: 1,
+    },
+    categoriesGrid: {
+      padding: 15,
+    },
+    categoryCard: {
+      backgroundColor: theme.surface,
+      borderRadius: 10,
+      marginBottom: 15,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 3.84,
+      elevation: 5,
+      overflow: "hidden",
+    },
+    categoryImage: {
+      width: "100%",
+      height: 150,
+    },
+    categoryInfo: {
+      padding: 15,
+    },
+    categoryName: {
+      fontSize: 18,
+      fontWeight: "bold",
+      color: theme.text,
+      marginBottom: 10,
+    },
+    subcategories: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+    },
+    subcategoryTag: {
+      backgroundColor: theme.inputBackground,
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 15,
+      marginRight: 8,
+      marginBottom: 8,
+    },
+    subcategoryText: {
+      fontSize: 14,
+      color: theme.textMuted,
+    },
+    categoryDetail: {
+      flex: 1,
+      padding: 15,
+    },
+    categoryHeader: {
+      marginBottom: 15,
+    },
+    backButton: {
+      marginBottom: 10,
+    },
+    backButtonText: {
+      color: theme.primary,
+      fontSize: 16,
+    },
+    categoryTitle: {
+      fontSize: 24,
+      fontWeight: "bold",
+      color: theme.text,
+    },
+    subcategoriesScroll: {
+      marginBottom: 15,
+    },
+    subcategoryButton: {
+      paddingHorizontal: 20,
+      paddingVertical: 10,
+      borderRadius: 20,
+      backgroundColor: theme.inputBackground,
+      marginRight: 10,
+    },
+    selectedSubcategory: {
+      backgroundColor: theme.primary,
+    },
+    subcategoryButtonText: {
+      fontSize: 14,
+      color: theme.textSecondary,
+    },
+    selectedSubcategoryText: {
+      color: theme.primaryForeground,
+    },
+    productsGrid: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      justifyContent: "space-between",
+    },
+    productCard: {
+      width: "48%",
+      backgroundColor: theme.surface,
+      borderRadius: 10,
+      marginBottom: 15,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 3.84,
+      elevation: 5,
+      overflow: "hidden",
+    },
+    productImage: {
+      width: "100%",
+      height: 200,
+    },
+    noProductsState: {
+      width: "100%",
+      paddingVertical: 20,
+      alignItems: "center",
+    },
+    noProductsText: {
+      color: theme.textMuted,
+      fontSize: 14,
+    },
+    productInfo: {
+      padding: 10,
+    },
+    brandName: {
+      fontSize: 14,
+      color: theme.textMuted,
+      marginBottom: 4,
+    },
+    productName: {
+      fontSize: 16,
+      color: theme.textSecondary,
+      marginBottom: 8,
+    },
+    priceRow: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    price: {
+      fontSize: 16,
+      fontWeight: "bold",
+      color: theme.text,
+      marginRight: 8,
+    },
+    discount: {
+      fontSize: 14,
+      color: theme.primary,
+    },
+  });

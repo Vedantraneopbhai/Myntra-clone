@@ -1,8 +1,9 @@
 import { useAuth } from "@/context/AuthContext";
+import { useTheme } from "@/context/ThemeContext";
 import axios from "axios";
 import { useRouter } from "expo-router";
 import { Heart, Trash2 } from "lucide-react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -13,60 +14,44 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { API_BASE_URL } from "@/constants/api";
+import { ThemeColors } from "@/constants/Theme";
 
-// const wishlistItems = [
-//   {
-//     id: 1,
-//     name: "Premium Cotton T-Shirt",
-//     brand: "H&M",
-//     price: "₹799",
-//     discount: "40% OFF",
-//     image:
-//       "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&auto=format&fit=crop",
-//   },
-//   {
-//     id: 2,
-//     name: "Slim Fit Denim Jacket",
-//     brand: "Levis",
-//     price: "₹2999",
-//     discount: "30% OFF",
-//     image:
-//       "https://images.unsplash.com/photo-1523205771623-e0faa4d2813d?w=500&auto=format&fit=crop",
-//   },
-// ];
 export default function Wishlist() {
   const router = useRouter();
   const { user } = useAuth();
+  const { theme } = useTheme();
+  const styles = useMemo(() => createStyles(theme), [theme]);
+
   const [wishlist, setwishlist] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
   useEffect(() => {
     fetchproduct();
   }, [user]);
+
   const fetchproduct = async () => {
     if (user) {
       try {
         setIsLoading(true);
-        const bag = await axios.get(
-          `${API_BASE_URL}/wishlist/${user._id}`
-        );
+        const bag = await axios.get(`${API_BASE_URL}/wishlist/${user._id}`);
         setwishlist(bag.data);
       } catch (error) {
         console.log(error);
-        setIsLoading(false);
       } finally {
         setIsLoading(false);
       }
     }
   };
-  const handledelete=async(itemid:any)=>{
+
+  const handledelete = async (itemid: any) => {
     try {
-      await axios.delete(`${API_BASE_URL}/wishlist/${itemid}`)
+      await axios.delete(`${API_BASE_URL}/wishlist/${itemid}`);
       fetchproduct();
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-   
-  }
+  };
+
   if (!user) {
     return (
       <View style={styles.container}>
@@ -74,10 +59,8 @@ export default function Wishlist() {
           <Text style={styles.headerTitle}>Wishlist</Text>
         </View>
         <View style={styles.emptyState}>
-          <Heart size={64} color="#ff3f6c" />
-          <Text style={styles.emptyTitle}>
-            Please login to view your wishlist
-          </Text>
+          <Heart size={64} color={theme.primary} />
+          <Text style={styles.emptyTitle}>Please login to view your wishlist</Text>
           <TouchableOpacity
             style={styles.loginButton}
             onPress={() => router.push("/login")}
@@ -88,10 +71,11 @@ export default function Wishlist() {
       </View>
     );
   }
+
   if (isLoading) {
     return (
       <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color="#ff3f6c" />
+        <ActivityIndicator size="large" color={theme.primary} />
       </View>
     );
   }
@@ -109,29 +93,38 @@ export default function Wishlist() {
       <ScrollView style={styles.content}>
         {validWishlist.length === 0 ? (
           <View style={styles.emptyState}>
-            <Heart size={64} color="#ff3f6c" />
+            <Heart size={64} color={theme.primary} />
             <Text style={styles.emptyTitle}>Your wishlist is empty</Text>
           </View>
         ) : (
-          validWishlist.map((item:any) => {
+          validWishlist.map((item: any) => {
             const product = item.productId;
-            const imageUri = product?.images?.[0] || "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop";
+            const imageUri =
+              product?.images?.[0] ||
+              "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop";
 
             return (
-          <View key={item._id} style={styles.wishlistItem}>
-            <Image  source={{ uri: imageUri }} style={styles.itemImage} />
-            <View style={styles.itemInfo}>
-              <Text style={styles.brandName}>{product?.brand || "Unknown brand"}</Text>
-              <Text style={styles.itemName}>{product?.name || "Unknown product"}</Text>
-              <View style={styles.priceContainer}>
-                <Text style={styles.price}>₹{product?.price ?? 0}</Text>
-                <Text style={styles.discount}>{product?.discount || ""}</Text>
+              <View key={item._id} style={styles.wishlistItem}>
+                <Image source={{ uri: imageUri }} style={styles.itemImage} />
+                <View style={styles.itemInfo}>
+                  <Text style={styles.brandName}>
+                    {product?.brand || "Unknown brand"}
+                  </Text>
+                  <Text style={styles.itemName}>
+                    {product?.name || "Unknown product"}
+                  </Text>
+                  <View style={styles.priceContainer}>
+                    <Text style={styles.price}>₹{product?.price ?? 0}</Text>
+                    <Text style={styles.discount}>{product?.discount || ""}</Text>
+                  </View>
+                </View>
+                <TouchableOpacity
+                  style={styles.removeButton}
+                  onPress={() => handledelete(item._id)}
+                >
+                  <Trash2 size={24} color={theme.primary} />
+                </TouchableOpacity>
               </View>
-            </View>
-            <TouchableOpacity style={styles.removeButton} onPress={()=>handledelete(item._id)}>
-              <Trash2 size={24} color="#ff3f6c" />
-            </TouchableOpacity>
-          </View>
             );
           })
         )}
@@ -140,105 +133,103 @@ export default function Wishlist() {
   );
 }
 
-const styles = StyleSheet.create({
-  loaderContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#fff",
-  },
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  header: {
-    padding: 15,
-    paddingTop: 50,
-    backgroundColor: "#fff",
-    borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#3e3e3e",
-  },
-  content: {
-    flex: 1,
-    padding: 15,
-  },
-  emptyState: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
-  emptyTitle: {
-    fontSize: 18,
-    color: "#3e3e3e",
-    marginTop: 20,
-    marginBottom: 20,
-  },
-  loginButton: {
-    backgroundColor: "#ff3f6c",
-    paddingHorizontal: 40,
-    paddingVertical: 15,
-    borderRadius: 10,
-  },
-  loginButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  wishlistItem: {
-    flexDirection: "row",
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    marginBottom: 15,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
+const createStyles = (theme: ThemeColors) =>
+  StyleSheet.create({
+    loaderContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: theme.background,
     },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-    overflow: "hidden",
-  },
-  itemImage: {
-    width: 100,
-    height: 120,
-  },
-  itemInfo: {
-    flex: 1,
-    padding: 15,
-  },
-  brandName: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 5,
-  },
-  itemName: {
-    fontSize: 16,
-    color: "#3e3e3e",
-    marginBottom: 10,
-  },
-  priceContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  price: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#3e3e3e",
-    marginRight: 10,
-  },
-  discount: {
-    fontSize: 14,
-    color: "#ff3f6c",
-  },
-  removeButton: {
-    padding: 15,
-    justifyContent: "center",
-  },
-});
+    container: {
+      flex: 1,
+      backgroundColor: theme.background,
+    },
+    header: {
+      padding: 15,
+      paddingTop: 50,
+      backgroundColor: theme.surface,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.border,
+    },
+    headerTitle: {
+      fontSize: 24,
+      fontWeight: "bold",
+      color: theme.text,
+    },
+    content: {
+      flex: 1,
+      padding: 15,
+    },
+    emptyState: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      padding: 20,
+    },
+    emptyTitle: {
+      fontSize: 18,
+      color: theme.textSecondary,
+      marginTop: 20,
+      marginBottom: 20,
+    },
+    loginButton: {
+      backgroundColor: theme.primary,
+      paddingHorizontal: 40,
+      paddingVertical: 15,
+      borderRadius: 10,
+    },
+    loginButtonText: {
+      color: theme.primaryForeground,
+      fontSize: 16,
+      fontWeight: "bold",
+    },
+    wishlistItem: {
+      flexDirection: "row",
+      backgroundColor: theme.surface,
+      borderRadius: 10,
+      marginBottom: 15,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 3.84,
+      elevation: 5,
+      overflow: "hidden",
+    },
+    itemImage: {
+      width: 100,
+      height: 120,
+    },
+    itemInfo: {
+      flex: 1,
+      padding: 15,
+    },
+    brandName: {
+      fontSize: 14,
+      color: theme.textMuted,
+      marginBottom: 5,
+    },
+    itemName: {
+      fontSize: 16,
+      color: theme.textSecondary,
+      marginBottom: 10,
+    },
+    priceContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    price: {
+      fontSize: 16,
+      fontWeight: "bold",
+      color: theme.text,
+      marginRight: 10,
+    },
+    discount: {
+      fontSize: 14,
+      color: theme.primary,
+    },
+    removeButton: {
+      padding: 15,
+      justifyContent: "center",
+    },
+  });

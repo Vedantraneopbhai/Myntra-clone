@@ -1,21 +1,29 @@
+import { useTheme } from '@/context/ThemeContext';
+import { ThemeColors } from '@/constants/Theme';
+
 /**
- * Learn more about light and dark modes:
- * https://docs.expo.dev/guides/color-schemes/
+ * Returns a single color token from the active theme.
+ * Optionally accepts per-prop overrides for light/dark.
+ *
+ * Usage:
+ *   const color = useThemeColor({}, 'primary');
+ *   const color = useThemeColor({ light: '#fff', dark: '#000' }, 'background');
  */
-
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
-
 export function useThemeColor(
   props: { light?: string; dark?: string },
-  colorName: keyof typeof Colors.light & keyof typeof Colors.dark
-) {
-  const theme = useColorScheme() ?? 'light';
-  const colorFromProps = props[theme];
+  colorName: keyof ThemeColors
+): string {
+  const { theme, themeMode } = useTheme();
+  const colorFromProps = props[themeMode];
 
   if (colorFromProps) {
     return colorFromProps;
-  } else {
-    return Colors[theme][colorName];
   }
+
+  const value = theme[colorName];
+  // statusBar is a non-color string — guard against it
+  if (typeof value === 'string' && value !== 'light' && value !== 'dark') {
+    return value;
+  }
+  return theme.text;
 }
