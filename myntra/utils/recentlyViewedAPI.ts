@@ -11,7 +11,7 @@
 import axios from "axios";
 
 const BASE_URL =
-  process.env.EXPO_PUBLIC_API_BASE_URL || "http://localhost:5000";
+  process.env.EXPO_PUBLIC_API_BASE_URL || "https://myntra-clone-7e59.onrender.com";
 
 /**
  * Track a product view on the server
