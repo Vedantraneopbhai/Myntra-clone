@@ -20,6 +20,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
 import { Search, X } from "lucide-react-native";
 import axios from "axios";
+import { API_BASE_URL } from "@/constants/api";
 
 // const categories = [
 //   {
@@ -131,7 +132,7 @@ export default function TabTwoScreen() {
     const fetchproduct = async () => {
       try {
         setIsLoading(true);
-        const cat = await axios.get("http://localhost:5000/category");
+        const cat = await axios.get(`${API_BASE_URL}/category`);
         setcategories(cat.data);
       } catch (error) {
         console.log(error);

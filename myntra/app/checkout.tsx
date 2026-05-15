@@ -12,6 +12,7 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
+import { API_BASE_URL } from "@/constants/api";
 
 export default function Checkout() {
   const [loading, setLoading] = useState(false);
@@ -23,7 +24,7 @@ export default function Checkout() {
       return;
     }
     try {
-      await axios.post(`http://localhost:5000/order/create/${user._id}`, {
+      await axios.post(`${API_BASE_URL}/create/${user._id}`, {
         shippingAddress: "123 Main Street, Apt 4B, New York, NY, 10001",
         paymentMethod: "Card",
       });

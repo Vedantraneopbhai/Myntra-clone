@@ -8,6 +8,7 @@ import {
   ScrollView,
   ActivityIndicator,
   Image,
+  Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Eye, EyeOff } from "lucide-react-native";
@@ -69,8 +70,10 @@ export default function Signup() {
         setisloading(true);
         await Signup(formData.fullName, formData.email, formData.password);
         router.replace("/(tabs)");
-      } catch (error) {
-        console.error(error);
+      } catch (error: any) {
+        const errorMsg = error?.response?.data?.message || error?.message || "Signup failed";
+        console.error("Signup error:", error);
+        Alert.alert("Signup Failed", errorMsg);
       } finally {
         setisloading(false);
       }

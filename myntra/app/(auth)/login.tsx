@@ -8,6 +8,7 @@ import {
   Image,
   ActivityIndicator,
   ScrollView,
+  Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
 import React from "react";
@@ -21,13 +22,34 @@ export default function Login() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [isloading, setisloading] = useState(false);
+  const [error, setError] = useState("");
+
   const handleLogin = async () => {
     try {
+      setError("");
+      
+      // Validation
+      if (!email.trim()) {
+        Alert.alert("Validation Error", "Please enter your email");
+        return;
+      }
+      if (!password) {
+        Alert.alert("Validation Error", "Please enter your password");
+        return;
+      }
+      if (!/\S+@\S+\.\S+/.test(email)) {
+        Alert.alert("Validation Error", "Please enter a valid email");
+        return;
+      }
+
       setisloading(true);
       await login(email, password);
       router.replace("/(tabs)");
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      const errorMsg = error?.response?.data?.message || error?.message || "Login failed";
+      console.error("Login error:", error);
+      Alert.alert("Login Failed", errorMsg);
+      setError(errorMsg);
     } finally {
       setisloading(false);
     }

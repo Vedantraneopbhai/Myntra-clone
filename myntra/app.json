@@ -1,7 +1,8 @@
 {
   "expo": {
     "name": "myntra",
-    "slug": "myntra",
+    "slug": "myntra-clone",
+    "owner": "vedant_rane",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/myntra.jpg",
@@ -38,8 +39,11 @@
       "typedRoutes": true
     },
     "extra": {
+      "router": {
+        "origin": false
+      },
       "eas": {
-        "projectId": "f9b38ac7-9f10-4d68-8789-b6b79a4410f5"
+        "projectId": "86f791dc-cbda-4444-a09f-12a24f647144"
       }
     }
   }

@@ -21,13 +21,17 @@ async function seedDatabase() {
     const insertedProducts = await Product.insertMany(productData);
     console.log(`${insertedProducts.length} products inserted`);
 
-    // Convert category data to proper format
+    // Build category-to-products mapping so each category can show multiple products
     const processedCategories = categoryData.map((cat) => {
+      const matchedProducts = insertedProducts
+        .filter((product) => product.category === cat.name)
+        .map((product) => product._id);
+
       return {
-        ...cat,
-        productId: cat.productId && cat.productId.$oid ? 
-          new mongoose.Types.ObjectId(cat.productId.$oid) : 
-          undefined,
+        name: cat.name,
+        subcategory: cat.subcategory,
+        image: cat.image,
+        productId: matchedProducts,
       };
     });
 

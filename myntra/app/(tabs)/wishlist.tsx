@@ -12,6 +12,7 @@ import {
   Image,
   ActivityIndicator,
 } from "react-native";
+import { API_BASE_URL } from "@/constants/api";
 
 // const wishlistItems = [
 //   {
@@ -46,7 +47,7 @@ export default function Wishlist() {
       try {
         setIsLoading(true);
         const bag = await axios.get(
-          `http://localhost:5000/wishlist/${user._id}`
+          `${API_BASE_URL}/wishlist/${user._id}`
         );
         setwishlist(bag.data);
       } catch (error) {
@@ -59,7 +60,7 @@ export default function Wishlist() {
   };
   const handledelete=async(itemid:any)=>{
     try {
-      await axios.delete(`http://localhost:5000/wishlist/${itemid}`)
+      await axios.delete(`${API_BASE_URL}/wishlist/${itemid}`)
       fetchproduct();
     } catch (error) {
       console.log(error)

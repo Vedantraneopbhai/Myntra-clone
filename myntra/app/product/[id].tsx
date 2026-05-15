@@ -14,6 +14,7 @@ import { Heart, ShoppingBag } from "lucide-react-native";
 import React from "react";
 import { useAuth } from "@/context/AuthContext";
 import axios from "axios";
+import { API_BASE_URL } from "@/constants/api";
 
 // Mock product data - in a real app, this would come from an API
 // const products = {
@@ -89,7 +90,7 @@ export default function ProductDetails() {
   const [loading, setLoading] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
   const autoScrollTimer = useRef<NodeJS.Timeout>();
-  const { user } = useAuth();
+  const { user, addToRecentlyViewed } = useAuth();
   const [product, setproduct] = useState<any>(null);
   const [iswishlist, setiswishlist] = useState(false);
   useEffect(() => {
@@ -99,9 +100,17 @@ export default function ProductDetails() {
       try {
         setIsLoading(true);
         const product = await axios.get(
-          `http://localhost:5000/product/${id}`
+          `${API_BASE_URL}/product/${id}`
         );
         setproduct(product.data);
+
+        // Track product view in recently viewed
+        try {
+          await addToRecentlyViewed(id as string, product.data);
+        } catch (trackError) {
+          console.error("Error tracking recently viewed:", trackError);
+          // Don't fail the product load if tracking fails
+        }
       } catch (error) {
         console.log(error);
         setIsLoading(false);
@@ -110,7 +119,7 @@ export default function ProductDetails() {
       }
     };
     fetchproduct();
-  }, []);
+  }, [id, addToRecentlyViewed]);
 
   useEffect(() => {
     // Start auto-scroll
@@ -150,7 +159,7 @@ export default function ProductDetails() {
     }
 
     try {
-      await axios.post(`http://localhost:5000/wishlist`, {
+      await axios.post(`${API_BASE_URL}/wishlist`, {
         userId: user._id,
         productId: id,
       });
@@ -173,7 +182,7 @@ export default function ProductDetails() {
     }
     try {
       setLoading(true);
-      await axios.post(`http://localhost:5000/bag`, {
+      await axios.post(`${API_BASE_URL}/bag`, {
         userId: user._id,
         productId: id,
         size: selectedSize,

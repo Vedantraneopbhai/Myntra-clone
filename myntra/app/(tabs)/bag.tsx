@@ -12,6 +12,7 @@ import { ShoppingBag, Minus, Plus, Trash2 } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import axios from "axios";
+import { API_BASE_URL } from "@/constants/api";
 
 const bagItems = [
   {
@@ -53,7 +54,7 @@ export default function Bag() {
       try {
         setIsLoading(true);
         const bag = await axios.get(
-          `http://localhost:5000/bag/${user._id}`
+          `${API_BASE_URL}/bag/${user._id}`
         );
         setbag(bag.data);
       } catch (error) {
@@ -96,7 +97,7 @@ export default function Bag() {
   );
   const handledelete=async(itemid:any)=>{
     try {
-      await axios.delete(`http://localhost:5000/bag/${itemid}`)
+      await axios.delete(`${API_BASE_URL}/bag/${itemid}`)
       fetchproduct();
     } catch (error) {
       console.log(error)

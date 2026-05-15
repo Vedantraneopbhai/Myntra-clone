@@ -7,6 +7,7 @@
       "discount": "60% OFF",
       "description": "Classic white t-shirt made from premium cotton. Perfect for everyday wear with a comfortable regular fit.",
       "sizes": ["S", "M", "L", "XL"],
+      "category": "Men",
       "images": [
         "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&auto=format&fit=crop",
         "https://images.unsplash.com/photo-1562157873-818bc0726f68?w=500&auto=format&fit=crop",
@@ -21,6 +22,7 @@
       "discount": "40% OFF",
       "description": "Classic denim jacket with a modern twist. Features premium quality denim and comfortable fit.",
       "sizes": ["S", "M", "L", "XL"],
+      "category": "Men",
       "images": [
         "https://images.unsplash.com/photo-1523205771623-e0faa4d2813d?w=500&auto=format&fit=crop",
         "https://images.unsplash.com/photo-1542272604-787c3835535d?w=500&auto=format&fit=crop",
@@ -35,6 +37,7 @@
       "discount": "50% OFF",
       "description": "Flowy summer dress perfect for warm weather. Made from lightweight fabric with a flattering cut.",
       "sizes": ["XS", "S", "M", "L"],
+      "category": "Women",
       "images": [
         "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=500&auto=format&fit=crop",
         "https://images.unsplash.com/photo-1623609163859-ca93c959b98a?w=500&auto=format&fit=crop",
@@ -49,10 +52,191 @@
       "discount": "30% OFF",
       "description": "Versatile sneakers that combine style and comfort. Perfect for both casual wear and light exercise.",
       "sizes": ["UK6", "UK7", "UK8", "UK9", "UK10"],
+      "category": "Men",
       "images": [
         "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&auto=format&fit=crop",
         "https://images.unsplash.com/photo-1607522370275-f14206abe5d3?w=500&auto=format&fit=crop",
         "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=500&auto=format&fit=crop"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Oxford Button-Up Shirt",
+      "brand": "Allen Solly",
+      "price": 1299,
+      "discount": "45% OFF",
+      "description": "Crisp oxford shirt with a classic collar. Perfect for formal and semi-formal occasions.",
+      "sizes": ["S", "M", "L", "XL", "XXL"],
+      "category": "Men",
+      "images": [
+        "https://images.unsplash.com/photo-1596217957745-b1e842dad7e3?w=500&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1598880877289-d7e8fe72e83e?w=500&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1508243539899-2c8da0ebbf12?w=500&auto=format&fit=crop"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Slim Fit Jeans",
+      "brand": "Wrangler",
+      "price": 1799,
+      "discount": "35% OFF",
+      "description": "Premium slim fit jeans with comfortable stretch fabric. Great for casual and smart casual looks.",
+      "sizes": ["28", "30", "32", "34", "36"],
+      "category": "Men",
+      "images": [
+        "https://images.unsplash.com/photo-1542272604-787c3835535d?w=500&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1603256906505-6a6d6c8d1cba?w=500&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1542272604-787c3835535d?w=500&auto=format&fit=crop"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Running Shorts",
+      "brand": "Nike",
+      "price": 1299,
+      "discount": "50% OFF",
+      "description": "Lightweight running shorts with moisture-wicking technology. Ideal for workouts and sports.",
+      "sizes": ["S", "M", "L", "XL"],
+      "category": "Men",
+      "images": [
+        "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=500&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1618354691551-b1326def007d?w=500&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1591088323297-8cf9f9b91b72?w=500&auto=format&fit=crop"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Elegant Saree",
+      "brand": "Aura",
+      "price": 2499,
+      "discount": "40% OFF",
+      "description": "Beautiful silk saree with intricate embroidery. Perfect for weddings and festivals.",
+      "sizes": ["Free"],
+      "category": "Women",
+      "images": [
+        "https://images.unsplash.com/photo-1610253840897-82c4bbfb1aea?w=500&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1629814656019-a8a58e4905ba?w=500&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1591228127359-3909bbc60f36?w=500&auto=format&fit=crop"
+      ]
+    },
+    {
+      "id": 9,
+      "name": "Casual Crop Top",
+      "brand": "Forever 21",
+      "price": 649,
+      "discount": "55% OFF",
+      "description": "Trendy crop top in solid color. Perfect for casual outings and parties.",
+      "sizes": ["XS", "S", "M", "L"],
+      "category": "Women",
+      "images": [
+        "https://images.unsplash.com/photo-1585399361357-d4fbb0bef60f?w=500&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1490481869428-dfc41acbee6f?w=500&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1554620519-b5949e9cc8b9?w=500&auto=format&fit=crop"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "Yoga Pants",
+      "brand": "Adidas",
+      "price": 2199,
+      "discount": "45% OFF",
+      "description": "High-waist yoga pants with excellent stretch and comfort. Perfect for workouts and casual wear.",
+      "sizes": ["XS", "S", "M", "L", "XL"],
+      "category": "Women",
+      "images": [
+        "https://images.unsplash.com/photo-1506629082632-33cccc2b2eae?w=500&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1561043666-d8a40a979055?w=500&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1517836357463-d25ddfcbf042?w=500&auto=format&fit=crop"
+      ]
+    },
+    {
+      "id": 11,
+      "name": "Printed Kurti",
+      "brand": "W",
+      "price": 899,
+      "discount": "50% OFF",
+      "description": "Comfortable printed kurti with traditional designs. Great for everyday casual wear.",
+      "sizes": ["S", "M", "L", "XL", "XXL"],
+      "category": "Women",
+      "images": [
+        "https://images.unsplash.com/photo-1585299810414-fee339b60d92?w=500&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1571746282562-40fed08220d0?w=500&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1589308078519-add4f82ea07d?w=500&auto=format&fit=crop"
+      ]
+    },
+    {
+      "id": 12,
+      "name": "Kids T-Shirt",
+      "brand": "Mothercare",
+      "price": 349,
+      "discount": "60% OFF",
+      "description": "Soft and comfortable t-shirt for kids. Made from 100% cotton with fun prints.",
+      "sizes": ["2-3Y", "3-4Y", "4-5Y", "5-6Y"],
+      "category": "Kids",
+      "images": [
+        "https://images.unsplash.com/photo-1545862332-197b745caea3?w=500&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1532453290872-0db78fe8c39f?w=500&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1618354691551-b1326def007d?w=500&auto=format&fit=crop"
+      ]
+    },
+    {
+      "id": 13,
+      "name": "Girls Frock",
+      "brand": "Mothercare",
+      "price": 749,
+      "discount": "50% OFF",
+      "description": "Adorable frock with unique designs. Perfect for school and casual occasions.",
+      "sizes": ["3-4Y", "4-5Y", "5-6Y", "6-7Y"],
+      "category": "Kids",
+      "images": [
+        "https://images.unsplash.com/photo-1588215457850-cb6bcc3b8f5c?w=500&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1622290291468-a28f7a7dc6a8?w=500&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1519074069444-1ba904df3d60?w=500&auto=format&fit=crop"
+      ]
+    },
+    {
+      "id": 14,
+      "name": "BB Cream",
+      "brand": "Maybelline",
+      "price": 599,
+      "discount": "40% OFF",
+      "description": "All-in-one BB cream with SPF 18. Provides coverage and hydration for natural-looking skin.",
+      "sizes": ["Light", "Medium", "Dark"],
+      "category": "Beauty",
+      "images": [
+        "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=500&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1576091160550-112173f7f869?w=500&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1559056199-641a0ac8b8d5?w=500&auto=format&fit=crop"
+      ]
+    },
+    {
+      "id": 15,
+      "name": "Lipstick Matte",
+      "brand": "MAC",
+      "price": 799,
+      "discount": "35% OFF",
+      "description": "Highly pigmented matte lipstick with long-lasting formula. Available in multiple shades.",
+      "sizes": ["Ruby", "Pink", "Red", "Nude"],
+      "category": "Beauty",
+      "images": [
+        "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=500&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1585951237318-9ea5e175b891?w=500&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1597455856512-b95e5b325b70?w=500&auto=format&fit=crop"
+      ]
+    },
+    {
+      "id": 16,
+      "name": "Facial Serum",
+      "brand": "The Ordinary",
+      "price": 499,
+      "discount": "50% OFF",
+      "description": "Lightweight facial serum with Vitamin C. Brightens and hydrates the skin.",
+      "sizes": ["30ml"],
+      "category": "Beauty",
+      "images": [
+        "https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=500&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?w=500&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=500&auto=format&fit=crop"
       ]
     }
   ]

@@ -12,6 +12,7 @@ import { Search, ChevronRight } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import axios from "axios";
+import { API_BASE_URL } from "@/constants/api";
 
 // const categories = [
 //   {
@@ -111,8 +112,8 @@ export default function Home() {
     const fetchproduct = async () => {
       try {
         setIsLoading(true);
-        const cat = await axios.get("http://localhost:5000/category");
-        const product = await axios.get("http://localhost:5000/product");
+        const cat = await axios.get(`${API_BASE_URL}/category`);
+        const product = await axios.get(`${API_BASE_URL}/product`);
         setcategories(cat.data);
         setproduct(product.data);
       } catch (error) {
@@ -139,7 +140,7 @@ export default function Home() {
 
       <Image
         source={{
-          uri: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&auto=format&fit=crop",
+          uri: "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=800&auto=format&fit=crop",
         }}
         style={styles.banner}
         resizeMode="cover"
