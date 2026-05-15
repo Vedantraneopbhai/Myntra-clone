@@ -127,7 +127,7 @@ export default function TabTwoScreen() {
     null
   );
   const [isLoading, setIsLoading] = useState(false);
-  const [categories, setcategories] = useState<any>(null);
+  const [categories, setcategories] = useState<any[]>([]);
   useEffect(() => {
     const fetchproduct = async () => {
       try {
@@ -182,7 +182,7 @@ export default function TabTwoScreen() {
       category.subcategory.some((subcategory: any) =>
         subcategory.toLowerCase().includes(searchQuery.toLowerCase())
       ) ||
-      category.productId.some(
+      (Array.isArray(category.productId) ? category.productId : []).some(
         (product: any) =>
           product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           product.brand.toLowerCase().includes(searchQuery.toLowerCase())
@@ -192,19 +192,33 @@ export default function TabTwoScreen() {
     ? categories?.find((cat: any) => cat._id === selectedCategory)
     : null;
   const renderProducts = (products: any) => {
-    return products?.map((product: any) => (
+    if (!Array.isArray(products) || products.length === 0) {
+      return (
+        <View style={styles.noProductsState}>
+          <Text style={styles.noProductsText}>No products found in this category</Text>
+        </View>
+      );
+    }
+
+    return products.map((product: any) => (
       <TouchableOpacity
         key={product._id}
         style={styles.productCard}
         onPress={() => router.push(`/product/${product._id}`)}
       >
-        <Image source={{ uri: product.images[0] }} style={styles.productImage} resizeMode="cover" />
+        <Image
+          source={{
+            uri: product?.images?.[0] || "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop",
+          }}
+          style={styles.productImage}
+          resizeMode="cover"
+        />
         <View style={styles.productInfo}>
-          <Text style={styles.brandName}>{product.brand}</Text>
-          <Text style={styles.productName}>{product.name}</Text>
+          <Text style={styles.brandName}>{product?.brand || "Unknown brand"}</Text>
+          <Text style={styles.productName}>{product?.name || "Unknown product"}</Text>
           <View style={styles.priceRow}>
-            <Text style={styles.price}>₹{product.price}</Text>
-            <Text style={styles.discount}>{product.discount}</Text>
+            <Text style={styles.price}>₹{product?.price ?? 0}</Text>
+            <Text style={styles.discount}>{product?.discount || ""}</Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -242,7 +256,7 @@ export default function TabTwoScreen() {
                 onPress={() => handleCategorySelect(category._id)}
               >
                 <Image
-                  source={{ uri: category.image }}
+                  source={{ uri: category?.image || "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop" }}
                   style={styles.categoryImage}
                 />
                 <View style={styles.categoryInfo}>
@@ -473,6 +487,15 @@ const styles = StyleSheet.create({
   productImage: {
     width: "100%",
     height: 200,
+  },
+  noProductsState: {
+    width: "100%",
+    paddingVertical: 20,
+    alignItems: "center",
+  },
+  noProductsText: {
+    color: "#666",
+    fontSize: 14,
   },
   productInfo: {
     padding: 10,

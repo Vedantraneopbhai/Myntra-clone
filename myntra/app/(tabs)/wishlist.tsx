@@ -37,7 +37,7 @@ import { API_BASE_URL } from "@/constants/api";
 export default function Wishlist() {
   const router = useRouter();
   const { user } = useAuth();
-  const [wishlist, setwishlist] = useState<any>(null);
+  const [wishlist, setwishlist] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     fetchproduct();
@@ -95,6 +95,11 @@ export default function Wishlist() {
       </View>
     );
   }
+
+  const validWishlist = Array.isArray(wishlist)
+    ? wishlist.filter((item) => item?.productId)
+    : [];
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -102,22 +107,34 @@ export default function Wishlist() {
       </View>
 
       <ScrollView style={styles.content}>
-        {wishlist?.map((item:any) => (
+        {validWishlist.length === 0 ? (
+          <View style={styles.emptyState}>
+            <Heart size={64} color="#ff3f6c" />
+            <Text style={styles.emptyTitle}>Your wishlist is empty</Text>
+          </View>
+        ) : (
+          validWishlist.map((item:any) => {
+            const product = item.productId;
+            const imageUri = product?.images?.[0] || "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop";
+
+            return (
           <View key={item._id} style={styles.wishlistItem}>
-            <Image  source={{ uri: item.productId.images[0] }} style={styles.itemImage} />
+            <Image  source={{ uri: imageUri }} style={styles.itemImage} />
             <View style={styles.itemInfo}>
-              <Text style={styles.brandName}>{item.productId.brand}</Text>
-              <Text style={styles.itemName}>{item.productId.name}</Text>
+              <Text style={styles.brandName}>{product?.brand || "Unknown brand"}</Text>
+              <Text style={styles.itemName}>{product?.name || "Unknown product"}</Text>
               <View style={styles.priceContainer}>
-                <Text style={styles.price}>{item.productId.price}</Text>
-                <Text style={styles.discount}>{item.productId.discount}</Text>
+                <Text style={styles.price}>₹{product?.price ?? 0}</Text>
+                <Text style={styles.discount}>{product?.discount || ""}</Text>
               </View>
             </View>
             <TouchableOpacity style={styles.removeButton} onPress={()=>handledelete(item._id)}>
               <Trash2 size={24} color="#ff3f6c" />
             </TouchableOpacity>
           </View>
-        ))}
+            );
+          })
+        )}
       </ScrollView>
     </View>
   );

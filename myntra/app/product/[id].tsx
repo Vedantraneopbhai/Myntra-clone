@@ -84,6 +84,7 @@ export default function ProductDetails() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
   const { width } = useWindowDimensions();
+  const screenWidth = width || 360;
   const [selectedSize, setSelectedSize] = useState("");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -137,7 +138,7 @@ export default function ProductDetails() {
       if (product && scrollViewRef.current) {
         const nextIndex = (currentImageIndex + 1) % product.images.length;
         scrollViewRef.current.scrollTo({
-          x: nextIndex * width,
+          x: nextIndex * screenWidth,
           animated: true,
         });
         setCurrentImageIndex(nextIndex);
@@ -221,34 +222,16 @@ export default function ProductDetails() {
     <View style={styles.container}>
       <ScrollView>
         <View style={styles.carouselContainer}>
-          <ScrollView
-            ref={scrollViewRef}
-            horizontal
-            pagingEnabled
-            showsHorizontalScrollIndicator={false}
-            onScroll={handleScroll}
-            scrollEventThrottle={16}
-          >
-            {product.images.map((image: any, index: any) => (
-              <Image
-                key={index}
-                source={{ uri: image }}
-                style={[styles.productImage, { width }]}
-                resizeMode="cover"
-              />
-            ))}
-          </ScrollView>
-          <View style={styles.pagination}>
-            {product.images.map((_: any, index: any) => (
-              <View
-                key={index}
-                style={[
-                  styles.paginationDot,
-                  currentImageIndex === index && styles.paginationDotActive,
-                ]}
-              />
-            ))}
-          </View>
+          <Image
+            source={{
+              uri:
+                product?.images?.[currentImageIndex] ||
+                product?.images?.[0] ||
+                "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&auto=format&fit=crop",
+            }}
+            style={[styles.productImage, { width: screenWidth }]}
+            resizeMode="cover"
+          />
         </View>
 
         <View style={styles.content}>
@@ -336,9 +319,13 @@ const styles = StyleSheet.create({
   },
   carouselContainer: {
     position: "relative",
+    width: "100%",
+    minHeight: 400,
   },
   productImage: {
     height: 400,
+    minHeight: 400,
+    alignSelf: "stretch",
   },
   pagination: {
     position: "absolute",
