@@ -3,6 +3,7 @@ const Bag = require("../models/Bag");
 const Order = require("../models/Order");
 const router = express.Router();
 const mongoose = require("mongoose");
+const NotificationQueue = require("../models/NotificationQueue");
 
 function genrateRandomTracking() {
   const carriers = ["Delhivery", "Bluedart", "Ecom Express", "XpressBees"];
@@ -69,6 +70,16 @@ router.post("/create/:userId", async (req, res) => {
       tracking: genrateRandomTracking(),
     });
     await newOrder.save();
+    
+    // Queue a real-time notification
+    await NotificationQueue.create({
+      userId: userid,
+      title: "🎉 Order Placed!",
+      body: `Your order for ₹${total} has been successfully placed and is being processed.`,
+      type: "real-time",
+      data: { orderId: newOrder._id, screen: "Orders" }
+    });
+
     await Bag.deleteMany({ userId: userid });
     res.status(200).json({ message: "Order placed successfully" });
   } catch (error) {

@@ -8,12 +8,18 @@ const Bagroutes = require("./routes/Bagroutes");
 const Wishlistroutes = require("./routes/Wishlistroutes");
 const OrderRoutes = require("./routes/OrderRoutes");
 const RecentlyViewedroutes = require("./routes/RecentlyViewedroutes");
+const NotificationRoutes = require("./routes/NotificationRoutes");
+const { initWorkers } = require("./services/notificationWorker");
 const cors = require('cors');
 dotenv.config();
 const app = express();
 app.use(express.json());
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+  next();
+});
 app.use(cors({
-  origin: '*', 
+  origin: true, // This reflects the request origin, allowing any origin with credentials
   credentials: true, 
 }));
 app.get("/", (req, res) => {
@@ -26,6 +32,7 @@ app.use("/bag", Bagroutes);
 app.use("/wishlist", Wishlistroutes);
 app.use("/Order", OrderRoutes);
 app.use("/recentlyviewed", RecentlyViewedroutes);
+app.use("/notifications", NotificationRoutes);
 
 if (!process.env.MONGO_URI) {
   console.error("MONGO_URI is missing. Set it in Render environment variables.");
@@ -40,4 +47,7 @@ mongoose
   .catch((err) => console.log(err));
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+  initWorkers(); // Start background notification workers
+});

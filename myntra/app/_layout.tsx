@@ -14,6 +14,7 @@ import React from "react";
 
 import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider, useTheme } from "@/context/ThemeContext";
+import { NotificationProvider } from "@/context/NotificationContext";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -40,11 +41,13 @@ function AppNavigator() {
   return (
     <NavThemeProvider value={themeMode === "dark" ? DarkTheme : DefaultTheme}>
       <AuthProvider>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="(tabs)" />
-          <Stack.Screen name="(auth)" />
-        </Stack>
-        <StatusBar style={theme.statusBar} />
+        <NotificationProvider>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="(tabs)" />
+            <Stack.Screen name="(auth)" />
+          </Stack>
+          <StatusBar style={theme.statusBar} />
+        </NotificationProvider>
       </AuthProvider>
     </NavThemeProvider>
   );

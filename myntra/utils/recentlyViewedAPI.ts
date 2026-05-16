@@ -9,9 +9,9 @@
  */
 
 import axios from "axios";
+import { API_BASE_URL } from "@/constants/api";
 
-const BASE_URL =
-  process.env.EXPO_PUBLIC_API_BASE_URL || "https://myntra-clone-7e59.onrender.com";
+const BASE_URL = API_BASE_URL;
 
 /**
  * Track a product view on the server
