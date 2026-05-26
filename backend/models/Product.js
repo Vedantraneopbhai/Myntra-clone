@@ -9,6 +9,15 @@ const ProductSchema = new mongoose.Schema(
     sizes: [String],
     category: String,
     images: [String],
+    stock: {
+      type: Map,
+      of: Number,
+      default: {},
+    },
+    isDiscontinued: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

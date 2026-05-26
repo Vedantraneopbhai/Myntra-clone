@@ -80,11 +80,11 @@ export default function Orders() {
             <View style={styles.itemsContainer}>
               {order.items.map((item: any) => (
                 <View key={item._id} style={styles.orderItem}>
-                  <Image source={{ uri: item.productId.images }} style={styles.itemImage} />
+                  <Image source={{ uri: item.productId?.images?.[0] || "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&auto=format&fit=crop" }} style={styles.itemImage} />
                   <View style={styles.itemInfo}>
-                    <Text style={styles.brandName}>{item.productId.brand}</Text>
-                    <Text style={styles.itemName}>{item.productId.name}</Text>
-                    <Text style={styles.itemPrice}>₹{item.productId.price}</Text>
+                    <Text style={styles.brandName}>{item.productId?.brand || "Brand"}</Text>
+                    <Text style={styles.itemName}>{item.productId?.name || "Product Name"}</Text>
+                    <Text style={styles.itemPrice}>₹{item.productId?.price ?? 0}</Text>
                   </View>
                 </View>
               ))}

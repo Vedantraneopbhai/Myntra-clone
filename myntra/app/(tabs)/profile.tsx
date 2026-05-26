@@ -18,6 +18,7 @@ import {
   ChevronRight,
   Moon,
   Sun,
+  Receipt,
 } from "lucide-react-native";
 import React, { useMemo } from "react";
 import { useAuth } from "@/context/AuthContext";
@@ -29,6 +30,7 @@ const menuItems = [
   { icon: Heart, label: "Wishlist", route: "/wishlist" },
   { icon: CreditCard, label: "Payment Methods", route: "/payments" },
   { icon: MapPin, label: "Addresses", route: "/addresses" },
+  { icon: Receipt, label: "My Transactions", route: "/transactions" },
   { icon: Settings, label: "Settings", route: "/settings" },
 ];
 

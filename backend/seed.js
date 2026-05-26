@@ -17,8 +17,28 @@ async function seedDatabase() {
     await Product.deleteMany({});
     console.log("Cleared existing data");
 
+    // Enrich productData with stock and isDiscontinued before inserting
+    const enrichedProductData = productData.map((p, index) => {
+      const stockMap = {};
+      if (p.sizes && Array.isArray(p.sizes)) {
+        p.sizes.forEach((size) => {
+          // Assign a random stock between 5 and 15
+          stockMap[size] = Math.floor(Math.random() * 11) + 5;
+        });
+      }
+      
+      // Mark Wrangler Slim Fit Jeans (index 5) as discontinued for testing discontinued handling
+      const isDiscontinued = index === 5; 
+      
+      return {
+        ...p,
+        stock: stockMap,
+        isDiscontinued: isDiscontinued,
+      };
+    });
+
     // Insert products first
-    const insertedProducts = await Product.insertMany(productData);
+    const insertedProducts = await Product.insertMany(enrichedProductData);
     console.log(`${insertedProducts.length} products inserted`);
 
     // Build category-to-products mapping so each category can show multiple products

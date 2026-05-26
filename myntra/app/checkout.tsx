@@ -4,30 +4,85 @@ import { ThemeColors } from "@/constants/Theme";
 import axios from "axios";
 import { useRouter } from "expo-router";
 import { CreditCard, MapPin, Truck } from "lucide-react-native";
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import {
   View, Text, StyleSheet, ScrollView,
-  TextInput, TouchableOpacity,
+  TextInput, TouchableOpacity, Alert, ActivityIndicator
 } from "react-native";
 import { API_BASE_URL } from "@/constants/api";
 
 export default function Checkout() {
   const [loading, setLoading] = useState(false);
+  const [bag, setBag] = useState<any[]>([]);
+  const [loadingBag, setLoadingBag] = useState(true);
+  
   const router = useRouter();
   const { user } = useAuth();
   const { theme } = useTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
 
+  useEffect(() => {
+    const fetchBag = async () => {
+      if (user) {
+        try {
+          setLoadingBag(true);
+          const res = await axios.get(`${API_BASE_URL}/bag/${user._id}`);
+          // Checkout only active items
+          setBag(res.data?.filter((item: any) => !item.isSavedForLater) || []);
+        } catch (error) {
+          console.error("Error fetching checkout bag:", error);
+        } finally {
+          setLoadingBag(false);
+        }
+      }
+    };
+    fetchBag();
+  }, [user]);
+
+  // Dynamically calculate summary totals
+  const subtotal = useMemo(() => {
+    return bag.reduce((sum, item) => sum + (item.productId?.price ?? 0) * item.quantity, 0);
+  }, [bag]);
+
+  const shipping = subtotal > 999 || subtotal === 0 ? 0 : 99; // Free shipping above ₹999
+  const tax = Math.round(subtotal * 0.05); // 5% GST tax
+  const total = subtotal + shipping + tax;
+
   const handleplaceorder = async () => {
     if (!user) { router.push("/login"); return; }
+    if (bag.length === 0) {
+      Alert.alert("Checkout Blocked", "Your active bag is empty. Please add items before checking out.");
+      return;
+    }
+
     try {
-      await axios.post(`${API_BASE_URL}/create/${user._id}`, {
+      setLoading(true);
+      // Corrected pre-existing API path bug: prepended '/Order' to '/create/:userId'
+      await axios.post(`${API_BASE_URL}/Order/create/${user._id}`, {
         shippingAddress: "123 Main Street, Apt 4B, New York, NY, 10001",
         paymentMethod: "Card",
       });
-      router.push("/orders");
-    } catch (error) { console.log(error); }
+      
+      Alert.alert(
+        "🎉 Success", 
+        "Your order has been successfully placed!", 
+        [{ text: "OK", onPress: () => router.push("/orders") }]
+      );
+    } catch (error: any) {
+      console.log("Checkout Error:", error);
+      Alert.alert("Checkout Failed", error.response?.data?.message || "Something went wrong placing the order.");
+    } finally {
+      setLoading(false);
+    }
   };
+
+  if (loadingBag) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color={theme.primary} />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -75,31 +130,35 @@ export default function Checkout() {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Truck size={24} color={theme.primary} />
-            <Text style={styles.sectionTitle}>Order Summary</Text>
+            <Text style={styles.sectionTitle}>Order Summary ({bag.length} items)</Text>
           </View>
           <View style={styles.summary}>
             <View style={styles.summaryRow}>
               <Text style={styles.summaryLabel}>Subtotal</Text>
-              <Text style={styles.summaryValue}>₹3,798</Text>
+              <Text style={styles.summaryValue}>₹{subtotal}</Text>
             </View>
             <View style={styles.summaryRow}>
               <Text style={styles.summaryLabel}>Shipping</Text>
-              <Text style={styles.summaryValue}>₹99</Text>
+              <Text style={styles.summaryValue}>{shipping === 0 ? "FREE" : `₹${shipping}`}</Text>
             </View>
             <View style={styles.summaryRow}>
-              <Text style={styles.summaryLabel}>Tax</Text>
-              <Text style={styles.summaryValue}>₹190</Text>
+              <Text style={styles.summaryLabel}>Tax (5% GST)</Text>
+              <Text style={styles.summaryValue}>₹{tax}</Text>
             </View>
             <View style={[styles.summaryRow, styles.total]}>
               <Text style={styles.totalLabel}>Total</Text>
-              <Text style={styles.totalValue}>₹4,087</Text>
+              <Text style={styles.totalValue}>₹{total}</Text>
             </View>
           </View>
         </View>
       </ScrollView>
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.placeOrderButton} onPress={handleplaceorder}>
-          <Text style={styles.placeOrderButtonText}>PLACE ORDER</Text>
+        <TouchableOpacity style={styles.placeOrderButton} onPress={handleplaceorder} disabled={loading}>
+          {loading ? (
+            <ActivityIndicator size="small" color={theme.primaryForeground} />
+          ) : (
+            <Text style={styles.placeOrderButtonText}>PLACE ORDER (₹{total})</Text>
+          )}
         </TouchableOpacity>
       </View>
     </View>
@@ -108,6 +167,7 @@ export default function Checkout() {
 
 const createStyles = (theme: ThemeColors) => StyleSheet.create({
   container: { flex: 1, backgroundColor: theme.background },
+  loaderContainer: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: theme.background },
   header: { padding: 15, paddingTop: 50, backgroundColor: theme.surface, borderBottomWidth: 1, borderBottomColor: theme.border },
   headerTitle: { fontSize: 24, fontWeight: "bold", color: theme.text },
   content: { flex: 1, padding: 15 },
