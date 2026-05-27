@@ -15,6 +15,7 @@ import {
 } from "react-native";
 import { API_BASE_URL } from "@/constants/api";
 import { ThemeColors } from "@/constants/Theme";
+import { getProductImageUrl } from "@/utils/imageUtils";
 
 export default function Wishlist() {
   const router = useRouter();
@@ -99,9 +100,7 @@ export default function Wishlist() {
         ) : (
           validWishlist.map((item: any) => {
             const product = item.productId;
-            const imageUri =
-              product?.images?.[0] ||
-              "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop";
+            const imageUri = getProductImageUrl(product?.images, product?.category, product?._id);
 
             return (
               <View key={item._id} style={styles.wishlistItem}>
@@ -187,49 +186,60 @@ const createStyles = (theme: ThemeColors) =>
     wishlistItem: {
       flexDirection: "row",
       backgroundColor: theme.surface,
-      borderRadius: 10,
-      marginBottom: 15,
+      borderRadius: 12,
+      marginBottom: 16,
       shadowColor: "#000",
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 3.84,
-      elevation: 5,
+      shadowOffset: { width: 0, height: 3 },
+      shadowOpacity: 0.15,
+      shadowRadius: 4,
+      elevation: 6,
       overflow: "hidden",
+      borderWidth: 1,
+      borderColor: theme.border,
     },
     itemImage: {
-      width: 100,
-      height: 120,
+      width: 130,
+      height: 150,
+      backgroundColor: theme.skeleton,
     },
     itemInfo: {
       flex: 1,
-      padding: 15,
+      padding: 16,
+      justifyContent: "space-between",
     },
     brandName: {
-      fontSize: 14,
+      fontSize: 12,
       color: theme.textMuted,
-      marginBottom: 5,
+      marginBottom: 6,
+      fontWeight: "600",
+      textTransform: "uppercase",
+      letterSpacing: 0.5,
     },
     itemName: {
-      fontSize: 16,
-      color: theme.textSecondary,
+      fontSize: 15,
+      color: theme.text,
       marginBottom: 10,
+      fontWeight: "700",
+      lineHeight: 18,
     },
     priceContainer: {
       flexDirection: "row",
       alignItems: "center",
+      gap: 8,
     },
     price: {
       fontSize: 16,
       fontWeight: "bold",
       color: theme.text,
-      marginRight: 10,
     },
     discount: {
-      fontSize: 14,
+      fontSize: 12,
       color: theme.primary,
+      fontWeight: "800",
     },
     removeButton: {
-      padding: 15,
+      paddingHorizontal: 16,
       justifyContent: "center",
+      alignItems: "center",
     },
   });

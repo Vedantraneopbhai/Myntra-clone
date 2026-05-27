@@ -16,6 +16,7 @@ import { useTheme } from "@/context/ThemeContext";
 import axios from "axios";
 import { API_BASE_URL } from "@/constants/api";
 import { ThemeColors } from "@/constants/Theme";
+import { getProductImageUrl } from "@/utils/imageUtils";
 
 export default function Bag() {
   const router = useRouter();
@@ -225,7 +226,7 @@ export default function Bag() {
         {/* Active Items List */}
         {activeItems.map((item) => {
           const product = item.productId || {};
-          const imageUri = product.images?.[0] || "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&auto=format&fit=crop";
+          const imageUri = getProductImageUrl(product.images, product.category, product._id);
 
           return (
             <View key={item._id} style={[styles.bagItem, item.outOfStock || item.isDiscontinued ? styles.disabledItem : {}]}>
@@ -321,7 +322,7 @@ export default function Bag() {
             
             {savedItems.map((item) => {
               const product = item.productId || {};
-              const imageUri = product.images?.[0] || "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&auto=format&fit=crop";
+              const imageUri = getProductImageUrl(product.images, product.category, product._id);
 
               return (
                 <View key={item._id} style={[styles.savedItemCard]}>

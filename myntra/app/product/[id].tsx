@@ -11,6 +11,7 @@ import { useTheme } from "@/context/ThemeContext";
 import axios from "axios";
 import { API_BASE_URL } from "@/constants/api";
 import { ThemeColors } from "@/constants/Theme";
+import { getCarouselImages } from "@/utils/imageUtils";
 
 export default function ProductDetails() {
   const { id } = useLocalSearchParams();
@@ -25,7 +26,6 @@ export default function ProductDetails() {
   const [isLoading, setIsLoading] = useState(true);
   const [loading, setLoading] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
-  const autoScrollTimer = useRef<NodeJS.Timeout>();
   const { user, addToRecentlyViewed } = useAuth();
   const [product, setproduct] = useState<any>(null);
   const [iswishlist, setiswishlist] = useState(false);
@@ -36,33 +36,34 @@ export default function ProductDetails() {
         setIsLoading(true);
         const res = await axios.get(`${API_BASE_URL}/product/${id}`);
         setproduct(res.data);
-        try { await addToRecentlyViewed(id as string, res.data); }
+        try { 
+          if (addToRecentlyViewed && user) { 
+            await addToRecentlyViewed(id as string, res.data); 
+          }
+        }
         catch (e) { console.error("Error tracking recently viewed:", e); }
       } catch (error) { console.log(error); }
       finally { setIsLoading(false); }
     };
-    fetchproduct();
-  }, [id, addToRecentlyViewed]);
+    if (id) { fetchproduct(); }
+  }, [id]);
 
   useEffect(() => {
-    startAutoScroll();
-    return () => { if (autoScrollTimer.current) clearInterval(autoScrollTimer.current); };
-  }, []);
-
-  const startAutoScroll = () => {
-    autoScrollTimer.current = setInterval(() => {
-      if (product && scrollViewRef.current) {
-        const nextIndex = (currentImageIndex + 1) % product.images.length;
-        scrollViewRef.current.scrollTo({ x: nextIndex * screenWidth, animated: true });
-        setCurrentImageIndex(nextIndex);
-      }
+    if (!product) return;
+    
+    const carouselImages = getCarouselImages(product?.images, product?.category);
+    const autoScrollInterval = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % carouselImages.length);
     }, 3000);
-  };
+
+    return () => clearInterval(autoScrollInterval);
+  }, [product]);
 
   const handleScroll = (event: any) => {
+    if (!product) return;
+    const carouselImages = getCarouselImages(product?.images, product?.category);
     const imageIndex = Math.round(event.nativeEvent.contentOffset.x / width);
-    setCurrentImageIndex(imageIndex);
-    if (autoScrollTimer.current) { clearInterval(autoScrollTimer.current); startAutoScroll(); }
+    setCurrentImageIndex(imageIndex % carouselImages.length);
   };
 
   const handleAddwishlist = async () => {
@@ -102,7 +103,7 @@ export default function ProductDetails() {
       <ScrollView>
         <View style={styles.carouselContainer}>
           <Image
-            source={{ uri: product?.images?.[currentImageIndex] || product?.images?.[0] || "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&auto=format&fit=crop" }}
+            source={{ uri: getCarouselImages(product?.images, product?.category)[currentImageIndex] }}
             style={[styles.productImage, { width: screenWidth }]}
             resizeMode="cover"
           />

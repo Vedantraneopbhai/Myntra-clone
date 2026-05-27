@@ -27,4 +27,7 @@ RecentlyViewedSchema.index({ userId: 1, productId: 1 }, { unique: true });
 // Index for fast retrieval of user's recently viewed items sorted by viewedAt
 RecentlyViewedSchema.index({ userId: 1, viewedAt: -1 });
 
+// Index for fast retrieval of user's browsing history
+RecentlyViewedSchema.index({ user: 1 });
+
 module.exports = mongoose.model("RecentlyViewed", RecentlyViewedSchema);

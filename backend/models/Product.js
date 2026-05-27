@@ -22,4 +22,7 @@ const ProductSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+ProductSchema.index({ 'category.level1': 1, 'category.level2': 1 });
+ProductSchema.index({ 'ratings.count': -1, 'ratings.average': -1 });
+
 module.exports = mongoose.model("Product", ProductSchema);

@@ -15,6 +15,7 @@ import axios from "axios";
 import { API_BASE_URL } from "@/constants/api";
 import { useTheme } from "@/context/ThemeContext";
 import { ThemeColors } from "@/constants/Theme";
+import { getProductImageUrl } from "@/utils/imageUtils";
 
 export default function TabTwoScreen() {
   const router = useRouter();
@@ -115,9 +116,7 @@ export default function TabTwoScreen() {
       >
         <Image
           source={{
-            uri:
-              product?.images?.[0] ||
-              "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop",
+            uri: getProductImageUrl(product.images, product.category, product._id),
           }}
           style={styles.productImage}
           resizeMode="cover"
@@ -388,17 +387,21 @@ const createStyles = (theme: ThemeColors) =>
       width: "48%",
       backgroundColor: theme.surface,
       borderRadius: 10,
-      marginBottom: 15,
+      marginBottom: 16,
       shadowColor: "#000",
       shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 3.84,
+      shadowOpacity: 0.12,
+      shadowRadius: 3.5,
       elevation: 5,
       overflow: "hidden",
+      borderWidth: 1,
+      borderColor: theme.border,
     },
     productImage: {
       width: "100%",
       height: 200,
+      backgroundColor: theme.skeleton,
+      resizeMode: "cover",
     },
     noProductsState: {
       width: "100%",
@@ -410,30 +413,36 @@ const createStyles = (theme: ThemeColors) =>
       fontSize: 14,
     },
     productInfo: {
-      padding: 10,
+      padding: 12,
     },
     brandName: {
-      fontSize: 14,
+      fontSize: 10,
       color: theme.textMuted,
-      marginBottom: 4,
+      marginBottom: 5,
+      fontWeight: "600",
+      textTransform: "uppercase",
+      letterSpacing: 0.6,
     },
     productName: {
-      fontSize: 16,
-      color: theme.textSecondary,
+      fontSize: 12,
+      color: theme.text,
       marginBottom: 8,
+      fontWeight: "700",
+      lineHeight: 15,
     },
     priceRow: {
       flexDirection: "row",
       alignItems: "center",
+      gap: 5,
     },
     price: {
-      fontSize: 16,
+      fontSize: 13,
       fontWeight: "bold",
       color: theme.text,
-      marginRight: 8,
     },
     discount: {
-      fontSize: 14,
+      fontSize: 10,
       color: theme.primary,
+      fontWeight: "800",
     },
   });

@@ -15,6 +15,7 @@ import { useTheme } from "@/context/ThemeContext";
 import axios from "axios";
 import { API_BASE_URL } from "@/constants/api";
 import { ThemeColors } from "@/constants/Theme";
+import { getProductImageUrl } from "@/utils/imageUtils";
 
 const deals = [
   {
@@ -156,14 +157,14 @@ export default function Home() {
                   onPress={() => handleProductPress(product._id)}
                 >
                   <Image
-                    source={{ uri: product.images[0] }}
+                    source={{ uri: getProductImageUrl(product.images, product.category, product._id) }}
                     style={styles.productImage}
                   />
                   <View style={styles.productInfo}>
                     <Text style={styles.brandName}>{product.brand}</Text>
                     <Text style={styles.productName}>{product.name}</Text>
                     <View style={styles.priceRow}>
-                      <Text style={styles.productPrice}>{product.price}</Text>
+                      <Text style={styles.productPrice}>₹{product.price}</Text>
                       <Text style={styles.discount}>{product.discount}</Text>
                     </View>
                   </View>
@@ -244,40 +245,42 @@ const createStyles = (theme: ThemeColors) =>
       marginHorizontal: -15,
     },
     categoryCard: {
-      width: 110,
-      marginHorizontal: 8,
+      width: 120,
+      marginHorizontal: 10,
       alignItems: "center",
+      justifyContent: "space-between",
     },
     categoryImage: {
-      width: 110,
-      height: 110,
-      borderRadius: 55,
+      width: 120,
+      height: 120,
+      borderRadius: 60,
       backgroundColor: theme.skeleton,
-      borderWidth: 2,
+      borderWidth: 3,
       borderColor: theme.primary,
+      marginBottom: 12,
     },
     categoryName: {
       textAlign: "center",
-      marginTop: 10,
-      fontSize: 13,
+      fontSize: 12,
       color: theme.textSecondary,
-      fontWeight: "500",
+      fontWeight: "600",
+      lineHeight: 14,
     },
     dealsScroll: {
       marginHorizontal: -15,
     },
     dealCard: {
-      width: 300,
-      height: 180,
-      marginHorizontal: 10,
-      borderRadius: 12,
+      width: 280,
+      height: 160,
+      marginHorizontal: 12,
+      borderRadius: 14,
       overflow: "hidden",
       backgroundColor: theme.skeleton,
       shadowColor: "#000",
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.15,
-      shadowRadius: 4,
-      elevation: 8,
+      shadowOffset: { width: 0, height: 3 },
+      shadowOpacity: 0.18,
+      shadowRadius: 5,
+      elevation: 9,
     },
     dealImage: {
       width: "100%",
@@ -289,69 +292,75 @@ const createStyles = (theme: ThemeColors) =>
       left: 0,
       right: 0,
       backgroundColor: theme.overlay,
-      padding: 18,
+      padding: 16,
     },
     dealTitle: {
       color: theme.textInverse,
-      fontSize: 20,
+      fontSize: 18,
       fontWeight: "bold",
     },
     productsGrid: {
       flexDirection: "row",
       flexWrap: "wrap",
+      justifyContent: "space-between",
       marginHorizontal: -8,
     },
     productCard: {
       width: "48%",
       marginHorizontal: "1%",
-      marginBottom: 18,
+      marginBottom: 16,
       backgroundColor: theme.surface,
-      borderRadius: 12,
+      borderRadius: 10,
       shadowColor: "#000",
-      shadowOffset: { width: 0, height: 3 },
+      shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.12,
-      shadowRadius: 4,
-      elevation: 6,
+      shadowRadius: 3.5,
+      elevation: 5,
       overflow: "hidden",
+      borderWidth: 1,
+      borderColor: theme.border,
     },
     productImage: {
       width: "100%",
-      height: 220,
-      borderTopLeftRadius: 12,
-      borderTopRightRadius: 12,
+      height: 200,
+      borderTopLeftRadius: 10,
+      borderTopRightRadius: 10,
       backgroundColor: theme.skeleton,
+      resizeMode: "cover",
     },
     productInfo: {
       padding: 12,
     },
     brandName: {
-      fontSize: 12,
+      fontSize: 10,
       color: theme.textMuted,
-      marginBottom: 4,
-      fontWeight: "500",
+      marginBottom: 5,
+      fontWeight: "600",
       textTransform: "uppercase",
-      letterSpacing: 0.5,
+      letterSpacing: 0.6,
     },
     productName: {
-      fontSize: 14,
+      fontSize: 12,
       marginBottom: 8,
       color: theme.text,
-      fontWeight: "600",
+      fontWeight: "700",
+      lineHeight: 15,
     },
     priceRow: {
       flexDirection: "row",
       alignItems: "center",
+      gap: 5,
     },
     productPrice: {
-      fontSize: 16,
+      fontSize: 13,
       fontWeight: "bold",
       color: theme.text,
-      marginRight: 8,
     },
     discount: {
-      fontSize: 12,
+      fontSize: 10,
       color: theme.primary,
-      fontWeight: "700",
+      fontWeight: "800",
+      letterSpacing: 0.2,
     },
     loader: {
       marginTop: 50,

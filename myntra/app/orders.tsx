@@ -13,6 +13,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
 import { ThemeColors } from "@/constants/Theme";
 import { API_BASE_URL } from "@/constants/api";
+import { getProductImageUrl } from "@/utils/imageUtils";
 
 export default function Orders() {
   const router = useRouter();
@@ -80,7 +81,7 @@ export default function Orders() {
             <View style={styles.itemsContainer}>
               {order.items.map((item: any) => (
                 <View key={item._id} style={styles.orderItem}>
-                  <Image source={{ uri: item.productId?.images?.[0] || "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&auto=format&fit=crop" }} style={styles.itemImage} />
+                  <Image source={{ uri: getProductImageUrl(item.productId?.images, item.productId?.category, item.productId?._id) }} style={styles.itemImage} />
                   <View style={styles.itemInfo}>
                     <Text style={styles.brandName}>{item.productId?.brand || "Brand"}</Text>
                     <Text style={styles.itemName}>{item.productId?.name || "Product Name"}</Text>
