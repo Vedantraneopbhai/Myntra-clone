@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: myntra-backend
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: MONGO_URI
+        scope: project
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "5000"
+    plan: free
+    region: oregon

@@ -1,4 +1,10 @@
 {
+  "buildCommand": "npx expo export --platform web",
+  "outputDirectory": "dist",
+  "framework": "expo",
+  "env": {
+    "EXPO_PUBLIC_API_BASE_URL": "@api_base_url"
+  },
   "rewrites": [
     {
       "source": "/(.*)",
