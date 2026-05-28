@@ -3,7 +3,7 @@
   "outputDirectory": "dist",
   "framework": "expo",
   "env": {
-    "EXPO_PUBLIC_API_BASE_URL": "@api_base_url"
+    "EXPO_PUBLIC_API_BASE_URL": "https://myntra-clone-1-jfcp.onrender.com"
   },
   "rewrites": [
     {
