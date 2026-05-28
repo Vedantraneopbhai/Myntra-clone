@@ -19,12 +19,22 @@ app.use((req, res, next) => {
   console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
   next();
 });
+
+// CORS Configuration
 app.use(cors({
-  origin: true, // This reflects the request origin, allowing any origin with credentials
-  credentials: true, 
+  origin: ['https://myntra-clone-wntn.vercel.app', 'http://localhost:3000', 'http://localhost:19006', 'http://localhost:8081'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
 app.get("/", (req, res) => {
   res.send("✅ Myntra backend in working");
+});
+
+// Health check endpoint
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "OK", message: "Backend is running" });
 });
 app.use("/user", userrouter);
 app.use("/category", categoryrouter);

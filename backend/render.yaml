@@ -11,5 +11,7 @@ services:
         value: production
       - key: PORT
         value: "5000"
+      - key: FRONTEND_URL
+        value: https://myntra-clone-wntn.vercel.app
     plan: free
     region: oregon

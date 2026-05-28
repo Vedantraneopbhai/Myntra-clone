@@ -204,59 +204,91 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const login = async (email: string, password: string) => {
     try {
+      console.log(`🔐 Login attempt for ${email}`);
+      console.log(`📡 API URL: ${API_BASE_URL}/user/login`);
+      
       const res = await axios.post(`${API_BASE_URL}/user/login`, {
         email,
         password,
       });
 
+      console.log(`✅ Login response:`, res.data);
+      
       const data = res.data?.user;
       
       if (!data || !data._id) {
-        throw new Error(res.data?.message || "Invalid response from server");
+        const errorMsg = res.data?.message || "Invalid response from server";
+        console.error(`❌ Login failed: ${errorMsg}`, res.data);
+        throw new Error(errorMsg);
       }
 
       if (!data.fullName) {
-        throw new Error("User data incomplete");
+        console.error(`❌ User data incomplete:`, data);
+        throw new Error("User data incomplete - missing fullName");
       }
 
+      console.log(`💾 Saving user data...`);
       await saveUserData(data._id, data.fullName, data.email);
       setUser({ _id: data._id, name: data.fullName, email: data.email });
       setIsAuthenticated(true);
+      console.log(`✅ Login successful!`);
 
       // Merge recently viewed histories on login
       await mergeHistoriesOnLogin(data._id);
     } catch (error: any) {
-      console.error("Login error details:", error);
+      console.error("❌ Login error details:", {
+        message: error?.message,
+        response: error?.response?.data,
+        status: error?.response?.status,
+        url: error?.config?.url,
+        fullError: error
+      });
       throw error;
     }
   };
 
   const Signup = async (fullName: string, email: string, password: string) => {
     try {
+      console.log(`📝 Signup attempt for ${email}`);
+      console.log(`📡 API URL: ${API_BASE_URL}/user/signup`);
+      
       const res = await axios.post(`${API_BASE_URL}/user/signup`, {
         fullName,
         email,
         password,
       });
+
+      console.log(`✅ Signup response:`, res.data);
       
       const data = res.data?.user;
       
       if (!data || !data._id) {
-        throw new Error(res.data?.message || "Invalid response from server");
+        const errorMsg = res.data?.message || "Invalid response from server";
+        console.error(`❌ Signup failed: ${errorMsg}`, res.data);
+        throw new Error(errorMsg);
       }
 
       if (!data.fullName) {
-        throw new Error("User data incomplete");
+        console.error(`❌ User data incomplete:`, data);
+        throw new Error("User data incomplete - missing fullName");
       }
 
+      console.log(`💾 Saving user data...`);
       await saveUserData(data._id, data.fullName, data.email);
       setUser({ _id: data._id, name: data.fullName, email: data.email });
       setIsAuthenticated(true);
+      console.log(`✅ Signup successful!`);
 
       // Merge recently viewed histories on signup (for anonymous -> authenticated transition)
       await mergeHistoriesOnLogin(data._id);
     } catch (error: any) {
-      console.error("Signup error details:", error);
+      console.error("❌ Signup error details:", {
+        message: error?.message,
+        response: error?.response?.data,
+        status: error?.response?.status,
+        url: error?.config?.url,
+        fullError: error
+      });
       throw error;
     }
   };
