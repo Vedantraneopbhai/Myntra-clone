@@ -37,10 +37,13 @@ export default function Signup() {
     if (validateForm()) {
       try {
         setisloading(true);
+        console.log(`📝 Starting signup for ${formData.email}`);
         await Signup(formData.fullName, formData.email, formData.password);
+        console.log(`✅ Signup successful, navigating to home`);
         router.replace("/(tabs)");
       } catch (error: any) {
-        const errorMsg = error?.response?.data?.message || error?.message || "Signup failed";
+        console.error("❌ Signup failed:", error);
+        const errorMsg = error?.message || error?.error?.message || "Signup failed";
         Alert.alert("Signup Failed", errorMsg);
       } finally {
         setisloading(false);

@@ -27,10 +27,13 @@ export default function Login() {
       if (!password) { Alert.alert("Validation Error", "Please enter your password"); return; }
       if (!/\S+@\S+\.\S+/.test(email)) { Alert.alert("Validation Error", "Please enter a valid email"); return; }
       setisloading(true);
+      console.log(`🔐 Starting login for ${email}`);
       await login(email, password);
+      console.log(`✅ Login successful, navigating to home`);
       router.replace("/(tabs)");
     } catch (error: any) {
-      const errorMsg = error?.response?.data?.message || error?.message || "Login failed";
+      console.error("❌ Login failed:", error);
+      const errorMsg = error?.message || error?.error?.message || "Login failed";
       Alert.alert("Login Failed", errorMsg);
     } finally {
       setisloading(false);
