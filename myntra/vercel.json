@@ -1,7 +1,7 @@
 {
   "buildCommand": "npx expo export --platform web",
   "outputDirectory": "dist",
-  "framework": "expo",
+  "framework": "vite",
   "env": {
     "EXPO_PUBLIC_API_BASE_URL": "https://myntra-clone-1-jfcp.onrender.com"
   },
