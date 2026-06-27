@@ -12,8 +12,7 @@ import { Search, ChevronRight } from "lucide-react-native";
 import React, { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
-import axios from "axios";
-import { API_BASE_URL } from "@/constants/api";
+import { supabase } from "@/utils/supabase";
 import { ThemeColors } from "@/constants/Theme";
 import { getProductImageUrl } from "@/utils/imageUtils";
 
@@ -51,20 +50,28 @@ export default function Home() {
   };
 
   useEffect(() => {
-    const fetchproduct = async () => {
+    const fetchData = async () => {
       try {
         setIsLoading(true);
-        const cat = await axios.get(`${API_BASE_URL}/category`);
-        const product = await axios.get(`${API_BASE_URL}/product`);
-        setcategories(cat.data);
-        setproduct(product.data);
+        const [catsRes, prodsRes] = await Promise.all([
+          supabase.from("categories").select("*"),
+          supabase.from("products").select("*")
+        ]);
+
+        if (catsRes.error) console.error("Error fetching categories", catsRes.error);
+        if (prodsRes.error) console.error("Error fetching products", prodsRes.error);
+
+        // Map Supabase 'id' field to match expected '_id' mapping in UI if needed, 
+        // or just pass data (we should adjust the map keys below to use `.id`)
+        setcategories(catsRes.data || []);
+        setproduct(prodsRes.data || []);
       } catch (error) {
-        console.log(error);
+        console.error("Fetch error:", error);
       } finally {
         setIsLoading(false);
       }
     };
-    fetchproduct();
+    fetchData();
   }, []);
 
   return (
@@ -107,7 +114,7 @@ export default function Home() {
             <Text style={styles.emptyText}>No categories available</Text>
           ) : (
             categories.map((category: any) => (
-              <TouchableOpacity key={category._id} style={styles.categoryCard}>
+              <TouchableOpacity key={category.id || category._id} style={styles.categoryCard}>
                 <Image
                   source={{ uri: category.image }}
                   style={styles.categoryImage}
@@ -152,12 +159,12 @@ export default function Home() {
             <View style={styles.productsGrid}>
               {product.map((product: any) => (
                 <TouchableOpacity
-                  key={product._id}
+                  key={product.id || product._id}
                   style={styles.productCard}
-                  onPress={() => handleProductPress(product._id)}
+                  onPress={() => handleProductPress(product.id || product._id)}
                 >
                   <Image
-                    source={{ uri: getProductImageUrl(product.images, product.category, product._id) }}
+                    source={{ uri: getProductImageUrl(product.images, product.category, product.id || product._id) }}
                     style={styles.productImage}
                   />
                   <View style={styles.productInfo}>

@@ -1,7 +1,7 @@
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
 import { ThemeColors } from "@/constants/Theme";
-import axios from "axios";
+import { supabase } from "@/utils/supabase";
 import { useRouter } from "expo-router";
 import { CreditCard, MapPin, Truck } from "lucide-react-native";
 import React, { useMemo, useState, useEffect } from "react";
@@ -9,7 +9,6 @@ import {
   View, Text, StyleSheet, ScrollView,
   TextInput, TouchableOpacity, Alert, ActivityIndicator
 } from "react-native";
-import { API_BASE_URL } from "@/constants/api";
 
 export default function Checkout() {
   const [loading, setLoading] = useState(false);
@@ -26,9 +25,16 @@ export default function Checkout() {
       if (user) {
         try {
           setLoadingBag(true);
-          const res = await axios.get(`${API_BASE_URL}/bag/${user._id}`);
-          // Checkout only active items
-          setBag(res.data?.filter((item: any) => !item.isSavedForLater) || []);
+          const { data, error } = await supabase
+            .from("cart_items")
+            .select("*, productId:products(*)")
+            .eq("user_id", user.id)
+            .eq("is_saved_for_later", false);
+            
+          if (error) throw error;
+          
+          const mappedBag = data?.map(item => ({ ...item, _id: item.id })) || [];
+          setBag(mappedBag);
         } catch (error) {
           console.error("Error fetching checkout bag:", error);
         } finally {
@@ -57,11 +63,36 @@ export default function Checkout() {
 
     try {
       setLoading(true);
-      // Corrected pre-existing API path bug: prepended '/Order' to '/create/:userId'
-      await axios.post(`${API_BASE_URL}/Order/create/${user._id}`, {
-        shippingAddress: "123 Main Street, Apt 4B, New York, NY, 10001",
-        paymentMethod: "Card",
-      });
+      // Create Order
+      const { data: order, error: orderError } = await supabase
+        .from("orders")
+        .insert({
+          user_id: user.id,
+          total: total,
+          shipping_address: "123 Main Street, Apt 4B, New York, NY, 10001",
+          payment_method: "Card",
+          status: "pending"
+        })
+        .select()
+        .single();
+        
+      if (orderError) throw orderError;
+
+      // Insert Order Items
+      const orderItems = bag.map(item => ({
+        order_id: order.id,
+        product_id: item.product_id,
+        size: item.size,
+        price: item.productId?.price,
+        quantity: item.quantity
+      }));
+      
+      const { error: itemsError } = await supabase.from("order_items").insert(orderItems);
+      if (itemsError) throw itemsError;
+
+      // Clear checked out items from cart
+      const cartItemIds = bag.map(item => item._id);
+      await supabase.from("cart_items").delete().in("id", cartItemIds);
       
       Alert.alert(
         "🎉 Success", 

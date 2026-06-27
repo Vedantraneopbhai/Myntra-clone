@@ -8,11 +8,11 @@ import {
   Package, ChevronRight, MapPin, Truck, CreditCard,
 } from "lucide-react-native";
 import React from "react";
-import axios from "axios";
+import { supabase } from "@/utils/supabase";
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
 import { ThemeColors } from "@/constants/Theme";
-import { API_BASE_URL } from "@/constants/api";
+
 import { getProductImageUrl } from "@/utils/imageUtils";
 
 export default function Orders() {
@@ -30,9 +30,25 @@ export default function Orders() {
       if (user) {
         try {
           setIsLoading(true);
-          const res = await axios.get(`${API_BASE_URL}/order/user/${user._id}`);
-          setorder(res.data);
-        } catch (error) { console.log(error); }
+          const { data, error } = await supabase
+            .from("orders")
+            .select("*, items:order_items(*, productId:products(*))")
+            .eq("user_id", user.id)
+            .order("created_at", { ascending: false });
+            
+          if (error) throw error;
+          
+          const mappedOrders = data?.map(o => ({
+            ...o,
+            _id: o.id,
+            date: new Date(o.created_at).toLocaleDateString(),
+            shippingAddress: o.shipping_address,
+            paymentMethod: o.payment_method,
+            items: o.items?.map((i: any) => ({ ...i, _id: i.id })) || []
+          })) || [];
+          
+          setorder(mappedOrders);
+        } catch (error) { console.error(error); }
         finally { setIsLoading(false); }
       } else { setIsLoading(false); }
     };

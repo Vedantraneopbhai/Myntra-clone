@@ -27,6 +27,8 @@ export default function TabTwoScreen() {
   const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [categories, setcategories] = useState<any[]>([]);
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
     const fetchproduct = async () => {
@@ -43,30 +45,32 @@ export default function TabTwoScreen() {
     fetchproduct();
   }, []);
 
-  if (isLoading) {
-    return (
-      <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color={theme.primary} />
-      </View>
-    );
-  }
-
-  if (!categories) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.notFoundText}>Categories not found</Text>
-      </View>
-    );
-  }
-
-  const handleSearch = (query: string) => {
+  const handleSearch = async (query: string) => {
     setSearchQuery(query);
     setSelectedCategory(null);
     setSelectedSubcategory(null);
+
+    if (query.trim().length === 0) {
+      setSearchResults([]);
+      setIsSearching(false);
+      return;
+    }
+
+    try {
+      setIsSearching(true);
+      const res = await axios.get(`${API_BASE_URL}/product/search/${query}`);
+      setSearchResults(res.data);
+    } catch (error) {
+      console.error("Search error:", error);
+      setSearchResults([]);
+    } finally {
+      setIsSearching(false);
+    }
   };
 
   const clearSearch = () => {
     setSearchQuery("");
+    setSearchResults([]);
     setSelectedCategory(null);
     setSelectedSubcategory(null);
   };
@@ -75,6 +79,7 @@ export default function TabTwoScreen() {
     setSelectedCategory(categoryId);
     setSelectedSubcategory(null);
     setSearchQuery("");
+    setSearchResults([]);
   };
 
   const handleSubcategorySelect = (subcategoryId: string) => {
@@ -87,11 +92,6 @@ export default function TabTwoScreen() {
       category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       category.subcategory.some((subcategory: any) =>
         subcategory.toLowerCase().includes(searchQuery.toLowerCase())
-      ) ||
-      (Array.isArray(category.productId) ? category.productId : []).some(
-        (product: any) =>
-          product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          product.brand.toLowerCase().includes(searchQuery.toLowerCase())
       )
   );
 
@@ -133,6 +133,22 @@ export default function TabTwoScreen() {
     ));
   };
 
+  if (isLoading) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color={theme.primary} />
+      </View>
+    );
+  }
+
+  if (!categories) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.notFoundText}>Categories not found</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -158,7 +174,31 @@ export default function TabTwoScreen() {
       </View>
 
       <ScrollView style={styles.content}>
-        {!selectedCategory && (
+        {/* Show search results if searching */}
+        {searchQuery && (
+          <View>
+            {isSearching ? (
+              <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color={theme.primary} />
+                <Text style={styles.loadingText}>Searching...</Text>
+              </View>
+            ) : searchResults.length > 0 ? (
+              <View>
+                <Text style={styles.resultsTitle}>Search Results ({searchResults.length})</Text>
+                <View style={styles.productsGrid}>
+                  {renderProducts(searchResults)}
+                </View>
+              </View>
+            ) : (
+              <View style={styles.noProductsState}>
+                <Text style={styles.noProductsText}>No products found for "{searchQuery}"</Text>
+              </View>
+            )}
+          </View>
+        )}
+
+        {/* Show categories if not searching */}
+        {!selectedCategory && !searchQuery && (
           <View style={styles.categoriesGrid}>
             {filtercategories?.map((category: any) => (
               <TouchableOpacity
@@ -195,6 +235,7 @@ export default function TabTwoScreen() {
           </View>
         )}
 
+        {/* Show selected category products */}
         {selectedcategorydata && (
           <View style={styles.categoryDetail}>
             <View style={styles.categoryHeader}>
@@ -273,176 +314,165 @@ const createStyles = (theme: ThemeColors) =>
       color: theme.text,
     },
     searchContainer: {
-      padding: 15,
-      backgroundColor: theme.surface,
-      borderBottomWidth: 1,
-      borderBottomColor: theme.border,
-    },
-    searchInputContainer: {
-      flexDirection: "row",
-      alignItems: "center",
-      backgroundColor: theme.inputBackground,
-      borderRadius: 10,
-      padding: 10,
-    },
-    searchIcon: {
-      marginRight: 10,
-    },
-    searchInput: {
-      flex: 1,
-      fontSize: 16,
-      color: theme.text,
-    },
-    content: {
-      flex: 1,
-    },
-    categoriesGrid: {
-      padding: 15,
+      gap: 15,
     },
     categoryCard: {
       backgroundColor: theme.surface,
-      borderRadius: 10,
-      marginBottom: 15,
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 3.84,
-      elevation: 5,
+      borderRadius: 12,
       overflow: "hidden",
+      marginBottom: 12,
+      borderWidth: 1,
+      borderColor: theme.border,
     },
     categoryImage: {
       width: "100%",
       height: 150,
+      backgroundColor: theme.inputBackground,
     },
     categoryInfo: {
-      padding: 15,
+      padding: 12,
     },
     categoryName: {
-      fontSize: 18,
+      fontSize: 16,
       fontWeight: "bold",
       color: theme.text,
-      marginBottom: 10,
+      marginBottom: 8,
     },
     subcategories: {
       flexDirection: "row",
-      flexWrap: "wrap",
+      gap: 6,
     },
     subcategoryTag: {
-      backgroundColor: theme.inputBackground,
-      paddingHorizontal: 12,
-      paddingVertical: 6,
-      borderRadius: 15,
+      backgroundColor: theme.primary,
+      paddingHorizontal: 10,
+      paddingVertical: 4,
+      borderRadius: 6,
       marginRight: 8,
-      marginBottom: 8,
     },
     subcategoryText: {
-      fontSize: 14,
-      color: theme.textMuted,
+      color: "white",
+      fontSize: 12,
+      fontWeight: "600",
     },
     categoryDetail: {
-      flex: 1,
       padding: 15,
     },
     categoryHeader: {
       marginBottom: 15,
     },
     backButton: {
+      paddingVertical: 8,
       marginBottom: 10,
     },
     backButtonText: {
       color: theme.primary,
-      fontSize: 16,
+      fontWeight: "bold",
+      fontSize: 14,
     },
     categoryTitle: {
-      fontSize: 24,
+      fontSize: 20,
       fontWeight: "bold",
       color: theme.text,
     },
     subcategoriesScroll: {
       marginBottom: 15,
+      flexGrow: 0,
     },
     subcategoryButton: {
-      paddingHorizontal: 20,
+      paddingHorizontal: 15,
       paddingVertical: 10,
       borderRadius: 20,
       backgroundColor: theme.inputBackground,
-      marginRight: 10,
+      marginRight: 8,
+      borderWidth: 1,
+      borderColor: theme.border,
     },
     selectedSubcategory: {
       backgroundColor: theme.primary,
+      borderColor: theme.primary,
     },
     subcategoryButtonText: {
-      fontSize: 14,
-      color: theme.textSecondary,
+      color: theme.text,
+      fontWeight: "600",
+      fontSize: 13,
     },
     selectedSubcategoryText: {
-      color: theme.primaryForeground,
+      color: "white",
     },
     productsGrid: {
       flexDirection: "row",
       flexWrap: "wrap",
       justifyContent: "space-between",
+      gap: 10,
     },
     productCard: {
       width: "48%",
       backgroundColor: theme.surface,
-      borderRadius: 10,
-      marginBottom: 16,
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.12,
-      shadowRadius: 3.5,
-      elevation: 5,
+      borderRadius: 12,
       overflow: "hidden",
+      marginBottom: 12,
       borderWidth: 1,
       borderColor: theme.border,
     },
     productImage: {
       width: "100%",
-      height: 200,
-      backgroundColor: theme.skeleton,
-      resizeMode: "cover",
-    },
-    noProductsState: {
-      width: "100%",
-      paddingVertical: 20,
-      alignItems: "center",
-    },
-    noProductsText: {
-      color: theme.textMuted,
-      fontSize: 14,
+      height: 180,
+      backgroundColor: theme.inputBackground,
     },
     productInfo: {
-      padding: 12,
+      padding: 10,
     },
     brandName: {
-      fontSize: 10,
+      fontSize: 12,
       color: theme.textMuted,
-      marginBottom: 5,
-      fontWeight: "600",
-      textTransform: "uppercase",
-      letterSpacing: 0.6,
+      marginBottom: 4,
     },
     productName: {
-      fontSize: 12,
+      fontSize: 13,
+      fontWeight: "600",
       color: theme.text,
-      marginBottom: 8,
-      fontWeight: "700",
-      lineHeight: 15,
+      marginBottom: 6,
+      numberOfLines: 2,
     },
     priceRow: {
       flexDirection: "row",
       alignItems: "center",
-      gap: 5,
+      gap: 8,
     },
     price: {
-      fontSize: 13,
+      fontSize: 14,
       fontWeight: "bold",
       color: theme.text,
     },
     discount: {
-      fontSize: 10,
+      fontSize: 12,
       color: theme.primary,
-      fontWeight: "800",
+    },
+    noProductsState: {
+      justifyContent: "center",
+      alignItems: "center",
+      paddingVertical: 60,
+    },
+    noProductsText: {
+      fontSize: 16,
+      color: theme.textMuted,
+      textAlign: "center",
+    },
+    loadingContainer: {
+      justifyContent: "center",
+      alignItems: "center",
+      paddingVertical: 60,
+    },
+    loadingText: {
+      fontSize: 14,
+      color: theme.textMuted,
+      marginTop: 12,
+    },
+    resultsTitle: {
+      fontSize: 16,
+      fontWeight: "bold",
+      color: theme.text,
+      padding: 15,
+      paddingBottom: 10,
     },
   });

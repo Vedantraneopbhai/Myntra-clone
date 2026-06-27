@@ -11,8 +11,8 @@
                          │
                          ▼
 ┌─────────────────────────────────────────────────────────────┐
-│          FRONTEND (React Native Expo - Web)                  │
-│              https://myntra-frontend.vercel.app              │
+│          FRONTEND (React Native Expo - Web)                 │
+│              https://myntra-frontend.vercel.app             │
 │  ┌─────────────────────────────────────────────────────┐   │
 │  │ • Login/Signup Pages                                │   │
 │  │ • Product Browse                                    │   │

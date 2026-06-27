@@ -8,8 +8,7 @@ import { Heart, ShoppingBag } from "lucide-react-native";
 import React from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
-import axios from "axios";
-import { API_BASE_URL } from "@/constants/api";
+import { supabase } from "@/utils/supabase";
 import { ThemeColors } from "@/constants/Theme";
 import { getCarouselImages } from "@/utils/imageUtils";
 
@@ -34,15 +33,22 @@ export default function ProductDetails() {
     const fetchproduct = async () => {
       try {
         setIsLoading(true);
-        const res = await axios.get(`${API_BASE_URL}/product/${id}`);
-        setproduct(res.data);
+        const { data, error } = await supabase
+          .from("products")
+          .select("*")
+          .eq("id", id)
+          .single();
+          
+        if (error) throw error;
+        setproduct(data);
+        
         try { 
           if (addToRecentlyViewed && user) { 
-            await addToRecentlyViewed(id as string, res.data); 
+            await addToRecentlyViewed(id as string, data); 
           }
         }
         catch (e) { console.error("Error tracking recently viewed:", e); }
-      } catch (error) { console.log(error); }
+      } catch (error) { console.error(error); }
       finally { setIsLoading(false); }
     };
     if (id) { fetchproduct(); }
@@ -69,10 +75,11 @@ export default function ProductDetails() {
   const handleAddwishlist = async () => {
     if (!user) { router.push("/login"); return; }
     try {
-      await axios.post(`${API_BASE_URL}/wishlist`, { userId: user._id, productId: id });
+      const { error } = await supabase.from("wishlist_items").insert({ user_id: user.id, product_id: id });
+      if (error) throw error;
       setiswishlist(true);
       router.push("/wishlist");
-    } catch (error) { console.log(error); }
+    } catch (error) { console.error(error); }
   };
 
   const handleAddToBag = async () => {
@@ -80,9 +87,16 @@ export default function ProductDetails() {
     if (!selectedSize) { alert("Please select a size"); return; }
     try {
       setLoading(true);
-      await axios.post(`${API_BASE_URL}/bag`, { userId: user._id, productId: id, size: selectedSize, quantity: 1 });
+      const { error } = await supabase.from("cart_items").insert({ 
+        user_id: user.id, 
+        product_id: id, 
+        size: selectedSize, 
+        quantity: 1, 
+        price_at_addition: product.price 
+      });
+      if (error) throw error;
       router.push("/bag");
-    } catch (error) { console.log(error); }
+    } catch (error) { console.error(error); }
     finally { setLoading(false); }
   };
 

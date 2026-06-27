@@ -1,6 +1,6 @@
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
-import axios from "axios";
+import { supabase } from "@/utils/supabase";
 import { useRouter } from "expo-router";
 import { Heart, Trash2 } from "lucide-react-native";
 import React, { useEffect, useMemo, useState } from "react";
@@ -13,7 +13,7 @@ import {
   Image,
   ActivityIndicator,
 } from "react-native";
-import { API_BASE_URL } from "@/constants/api";
+import { ThemeColors } from "@/constants/Theme";
 import { ThemeColors } from "@/constants/Theme";
 import { getProductImageUrl } from "@/utils/imageUtils";
 
@@ -34,10 +34,21 @@ export default function Wishlist() {
     if (user) {
       try {
         setIsLoading(true);
-        const bag = await axios.get(`${API_BASE_URL}/wishlist/${user._id}`);
-        setwishlist(bag.data);
+        const { data, error } = await supabase
+          .from("wishlist_items")
+          .select("*, productId:products(*)")
+          .eq("user_id", user.id);
+          
+        if (error) throw error;
+        
+        const mappedData = data?.map((item: any) => ({
+          ...item,
+          _id: item.id
+        })) || [];
+        
+        setwishlist(mappedData);
       } catch (error) {
-        console.log(error);
+        console.error(error);
       } finally {
         setIsLoading(false);
       }
@@ -46,10 +57,11 @@ export default function Wishlist() {
 
   const handledelete = async (itemid: any) => {
     try {
-      await axios.delete(`${API_BASE_URL}/wishlist/${itemid}`);
+      const { error } = await supabase.from("wishlist_items").delete().eq("id", itemid);
+      if (error) throw error;
       fetchproduct();
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
