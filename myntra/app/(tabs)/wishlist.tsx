@@ -14,7 +14,6 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { ThemeColors } from "@/constants/Theme";
-import { ThemeColors } from "@/constants/Theme";
 import { getProductImageUrl } from "@/utils/imageUtils";
 
 export default function Wishlist() {

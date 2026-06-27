@@ -15,7 +15,6 @@ import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
 import { supabase } from "@/utils/supabase";
 import { ThemeColors } from "@/constants/Theme";
-import { ThemeColors } from "@/constants/Theme";
 import { getProductImageUrl } from "@/utils/imageUtils";
 
 export default function Bag() {

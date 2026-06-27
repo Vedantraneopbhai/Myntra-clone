@@ -43,9 +43,12 @@ export default function Login() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
       <View style={styles.headerSection}>
-        <View style={styles.cartImagePlaceholder}>
-          <Text style={styles.placeholderText}>🛍️</Text>
-        </View>
+        <Image 
+          source={{ uri: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=800&auto=format&fit=crop" }} 
+          style={styles.headerImage} 
+          resizeMode="cover"
+        />
+        <View style={styles.headerOverlay} />
       </View>
       <View style={styles.formContainer}>
         <Text style={styles.title}>Welcome to Myntra</Text>
@@ -87,15 +90,16 @@ const createStyles = (theme: ThemeColors) => StyleSheet.create({
   container: { flex: 1, backgroundColor: theme.loginHeaderBg },
   contentContainer: { flexGrow: 1 },
   headerSection: {
-    height: 280, backgroundColor: theme.loginHeaderBg, position: "relative",
-    justifyContent: "center", alignItems: "center", paddingTop: 40, overflow: "hidden",
+    height: 280, position: "relative",
+    justifyContent: "center", alignItems: "center", overflow: "hidden",
   },
-  cartImagePlaceholder: {
-    width: 200, height: 200, backgroundColor: "rgba(255, 255, 255, 0.2)",
-    borderRadius: 100, justifyContent: "center", alignItems: "center",
-    borderWidth: 2, borderColor: "rgba(255, 255, 255, 0.3)",
+  headerImage: {
+    width: "100%", height: "100%", position: "absolute",
   },
-  placeholderText: { fontSize: 80 },
+  headerOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0, 0, 0, 0.3)",
+  },
   formContainer: {
     flex: 1, backgroundColor: theme.surface, borderTopLeftRadius: 40,
     borderTopRightRadius: 40, paddingHorizontal: 24, paddingTop: 40, paddingBottom: 30,
