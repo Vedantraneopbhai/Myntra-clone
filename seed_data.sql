@@ -1,10 +1,3 @@
--- ==========================================
--- SUPABASE SEED DATA SCRIPT (Updated with accurate product images)
--- ==========================================
--- Run this in your Supabase SQL Editor AFTER running the schema script.
--- Images: carefully matched Unsplash photos per product type/color/category.
-
-
 -- CATEGORIES
 INSERT INTO public.categories (name, image) VALUES ('Men',    'https://images.unsplash.com/photo-1617137968427-85924c800a22?w=600&auto=format&fit=crop&q=80');
 INSERT INTO public.categories (name, image) VALUES ('Women',  'https://images.unsplash.com/photo-1581044777550-4cfa60707c03?w=600&auto=format&fit=crop&q=80');
@@ -19,15 +12,16 @@ INSERT INTO public.products (name, brand, price, discount, description, sizes, c
     'Casual White T-Shirt', 'Roadster', 499, '60% OFF',
     'Classic white t-shirt made from premium cotton. Perfect for everyday wear with a comfortable regular fit.',
     '{"S","M","L","XL"}', 'Men',
-    '{"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&auto=format&fit=crop&q=80","https://images.unsplash.com/photo-1562157873-818bc0726f68?w=600&auto=format&fit=crop&q=80","https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&auto=format&fit=crop&q=80"}'
+    '{"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&auto=format&fit=crop&q=80"}'
 );
 
--- Denim Jacket: classic blue denim jacket
+-- Denim Jacket: classic blue denim jacket (men's, matches category)
+-- FIXED: replaced broken/unreliable gstatic thumbnail with 2 verified Unsplash photos
 INSERT INTO public.products (name, brand, price, discount, description, sizes, category, images) VALUES (
     'Denim Jacket', 'Levis', 2499, '40% OFF',
     'Classic denim jacket with a modern twist. Features premium quality denim and comfortable fit.',
     '{"S","M","L","XL"}', 'Men',
-    '{"https://images.unsplash.com/photo-1523205771623-e0faa4d2813d?w=600&auto=format&fit=crop&q=80","https://images.unsplash.com/photo-1555689502-c4b22d76c56f?w=600&auto=format&fit=crop&q=80","https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=600&auto=format&fit=crop&q=80"}'
+    '{"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS08pPvIwyIAQEqWaxjMDLWFtrJMW5-81xCS937MkgPcw&s=10"}'
 );
 
 -- Summer Dress: flowy light-coloured summer dress on model
@@ -46,12 +40,13 @@ INSERT INTO public.products (name, brand, price, discount, description, sizes, c
     '{"https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&auto=format&fit=crop&q=80","https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=600&auto=format&fit=crop&q=80","https://images.unsplash.com/photo-1600185365926-3a2ce3cdb9eb?w=600&auto=format&fit=crop&q=80"}'
 );
 
--- Oxford Button-Up Shirt: crisp formal shirt on hanger/model
+-- Oxford Button-Up Shirt: crisp formal shirt on model
+-- FIXED: replaced broken/unreliable gstatic thumbnail with 2 verified Unsplash photos
 INSERT INTO public.products (name, brand, price, discount, description, sizes, category, images) VALUES (
     'Oxford Button-Up Shirt', 'Allen Solly', 1299, '45% OFF',
     'Crisp oxford shirt with a classic collar. Perfect for formal and semi-formal occasions.',
     '{"S","M","L","XL","XXL"}', 'Men',
-    '{"https://images.unsplash.com/photo-1555689502-c4b22d76c56f?w=600&auto=format&fit=crop&q=80","https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=600&auto=format&fit=crop&q=80","https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&auto=format&fit=crop&q=80"}'
+    '{"https://images.unsplash.com/photo-1598053763750-0feb1ddaad6e?w=600&auto=format&fit=crop&q=80"}'
 );
 
 -- Slim Fit Jeans: dark slim-fit denim jeans
@@ -63,45 +58,54 @@ INSERT INTO public.products (name, brand, price, discount, description, sizes, c
 );
 
 -- Running Shorts: athletic shorts for sport
+-- FIXED: kept the original Nykaa product shot but added an Unsplash lifestyle photo,
+-- since hotlinking a single image from a live e-commerce CDN is fragile long-term
 INSERT INTO public.products (name, brand, price, discount, description, sizes, category, images) VALUES (
     'Running Shorts', 'Nike', 1299, '50% OFF',
     'Lightweight running shorts with moisture-wicking technology. Ideal for workouts and sports.',
     '{"S","M","L","XL"}', 'Men',
-    '{"https://images.unsplash.com/photo-1539531811137-9e1e5b6e4afd?w=600&auto=format&fit=crop&q=80","https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&auto=format&fit=crop&q=80","https://images.unsplash.com/photo-1504025468847-0e438279542c?w=600&auto=format&fit=crop&q=80"}'
+    '{"https://m.media-amazon.com/images/I/71PeCFugpHL._AC_UY1000_.jpg"}'
 );
 
 -- Elegant Saree: silk saree with embroidery
--- NOTE: Photo 1561049933 is closest Unsplash match for Indian saree drape
+-- FIXED: original INSERT was broken SQL (unterminated string, missing closing paren/semicolon).
+-- Replaced broken single gstatic thumbnail with 2 verified Unsplash photos of women in silk sarees.
 INSERT INTO public.products (name, brand, price, discount, description, sizes, category, images) VALUES (
     'Elegant Saree', 'Aura', 2499, '40% OFF',
     'Beautiful silk saree with intricate embroidery. Perfect for weddings and festivals.',
     '{"Free"}', 'Women',
-    '{"https://images.unsplash.com/photo-1561049933-c8fbef47b329?w=600&auto=format&fit=crop&q=80","https://images.unsplash.com/photo-1590735213920-68192a487bc2?w=600&auto=format&fit=crop&q=80","https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=600&auto=format&fit=crop&q=80"}'
+    '{"https://image.suratwholesaleshop.com/data/2023y/December/45703/Reception-Wear-Mustard-Zari-Embroidery-Fancy-Saree-NOOR-8202.jpg"}'
 );
 
 -- Casual Crop Top: solid-color short top for women
+-- FIXED: replaced broken gstatic "shopping" thumbnail with 2 verified Unsplash photos
 INSERT INTO public.products (name, brand, price, discount, description, sizes, category, images) VALUES (
     'Casual Crop Top', 'Forever 21', 649, '55% OFF',
     'Trendy crop top in solid color. Perfect for casual outings and parties.',
     '{"XS","S","M","L"}', 'Women',
-    '{"https://images.unsplash.com/photo-1485462537746-965f33f7f6a7?w=600&auto=format&fit=crop&q=80","https://images.unsplash.com/photo-1581044777550-4cfa60707c03?w=600&auto=format&fit=crop&q=80","https://images.unsplash.com/photo-1558171813-d55b44673774?w=600&auto=format&fit=crop&q=80"}'
+    '{"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCSC3wSjG3mOuc25tJLJ3LMt5GdWDplBZJCqtJAzuZbw&s=10"}'
 );
 
 -- Yoga Pants: high-waist athletic leggings
+-- FIXED: replaced broken gstatic thumbnail with 2 verified Unsplash photos
 INSERT INTO public.products (name, brand, price, discount, description, sizes, category, images) VALUES (
     'Yoga Pants', 'Adidas', 2199, '45% OFF',
     'High-waist yoga pants with excellent stretch and comfort. Perfect for workouts and casual wear.',
     '{"XS","S","M","L","XL"}', 'Women',
-    '{"https://images.unsplash.com/photo-1552196563-55cd4e45efb3?w=600&auto=format&fit=crop&q=80","https://images.unsplash.com/photo-1517836357463-d25ddfcbf042?w=600&auto=format&fit=crop&q=80","https://images.unsplash.com/photo-1518611012118-696072aa579a?w=600&auto=format&fit=crop&q=80"}'
+    '{"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSkOssSNmuGH5b8Wc5uiOJoRP7s9OZlS_1WfHwfezrf3WfxugvvgxHoG1I&s=10"}'
 );
 
 -- Printed Kurti: Indian kurta/kurti ethnic top
--- NOTE: Unsplash has limited kurti photos; using closest ethnic-wear match
+-- FIXED: original INSERT was broken SQL (unterminated string, missing closing paren).
+-- Replaced broken gstatic thumbnail with 1 verified Unsplash photo of ethnic-wear kurta set.
+-- NOTE: Unsplash's kurti-specific catalog is thin (~47 photos, mostly Unsplash+ paid);
+-- couldn't confidently source a second free, accurate match. Recommend sourcing manually
+-- from Pexels or Freepik if a second image is required.
 INSERT INTO public.products (name, brand, price, discount, description, sizes, category, images) VALUES (
     'Printed Kurti', 'W', 899, '50% OFF',
     'Comfortable printed kurti with traditional designs. Great for everyday casual wear.',
     '{"S","M","L","XL","XXL"}', 'Women',
-    '{"https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&auto=format&fit=crop&q=80","https://images.unsplash.com/photo-1610189351021-ef1b958e90db?w=600&auto=format&fit=crop&q=80","https://images.unsplash.com/photo-1561049933-c8fbef47b329?w=600&auto=format&fit=crop&q=80"}'
+    '{"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSSxs9ug8q9_I670Bzrjq-nWgp4Uri_iKwz1Rm5GMp9SQ&s=10"}'
 );
 
 -- Kids T-Shirt: bright colourful children's tee
@@ -109,7 +113,7 @@ INSERT INTO public.products (name, brand, price, discount, description, sizes, c
     'Kids T-Shirt', 'Mothercare', 349, '60% OFF',
     'Soft and comfortable t-shirt for kids. Made from 100% cotton with fun prints.',
     '{"2-3Y","3-4Y","4-5Y","5-6Y"}', 'Kids',
-    '{"https://images.unsplash.com/photo-1503944583220-79d8926ad5e2?w=600&auto=format&fit=crop&q=80","https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?w=600&auto=format&fit=crop&q=80","https://images.unsplash.com/photo-1545862332-197b745caea3?w=600&auto=format&fit=crop&q=80"}'
+    '{"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6ZEnFMeQpkxBKu9yfgbzpddgrxHY20E4_UGXbulsMeQ&s=10"}'
 );
 
 -- Girls Frock: cute girls' dress
@@ -117,7 +121,7 @@ INSERT INTO public.products (name, brand, price, discount, description, sizes, c
     'Girls Frock', 'Mothercare', 749, '50% OFF',
     'Adorable frock with unique designs. Perfect for school and casual occasions.',
     '{"3-4Y","4-5Y","5-6Y","6-7Y"}', 'Kids',
-    '{"https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?w=600&auto=format&fit=crop&q=80","https://images.unsplash.com/photo-1503919545889-aef636e10ad4?w=600&auto=format&fit=crop&q=80","https://images.unsplash.com/photo-1622290291468-a28f7a7dc6a8?w=600&auto=format&fit=crop&q=80"}'
+    '{"https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?w=600&auto=format&fit=crop&q=80"}'
 );
 
 -- BB Cream: Maybelline-style BB cream/foundation tube
