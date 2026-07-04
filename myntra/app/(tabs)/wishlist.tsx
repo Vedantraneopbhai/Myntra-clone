@@ -14,7 +14,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { ThemeColors } from "@/constants/Theme";
-import { getProductImageUrl } from "@/utils/imageUtils";
+import { getProductImageSource } from "@/utils/imageUtils";
 
 export default function Wishlist() {
   const router = useRouter();
@@ -111,11 +111,12 @@ export default function Wishlist() {
         ) : (
           validWishlist.map((item: any) => {
             const product = item.productId;
-            const imageUri = getProductImageUrl(product?.images, product?.category, product?._id);
-
             return (
               <View key={item._id} style={styles.wishlistItem}>
-                <Image source={{ uri: imageUri }} style={styles.itemImage} />
+                <Image
+                  source={getProductImageSource(product?.name, product?.images, product?.category, product?._id)}
+                  style={styles.itemImage}
+                />
                 <View style={styles.itemInfo}>
                   <Text style={styles.brandName}>
                     {product?.brand || "Unknown brand"}

@@ -57,7 +57,7 @@ export default function ProductDetails() {
   useEffect(() => {
     if (!product) return;
     
-    const carouselImages = getCarouselImages(product?.images, product?.category);
+    const carouselImages = getCarouselImages(product?.images, product?.category, product?.name);
     const autoScrollInterval = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % carouselImages.length);
     }, 3000);
@@ -67,7 +67,7 @@ export default function ProductDetails() {
 
   const handleScroll = (event: any) => {
     if (!product) return;
-    const carouselImages = getCarouselImages(product?.images, product?.category);
+    const carouselImages = getCarouselImages(product?.images, product?.category, product?.name);
     const imageIndex = Math.round(event.nativeEvent.contentOffset.x / width);
     setCurrentImageIndex(imageIndex % carouselImages.length);
   };
@@ -112,15 +112,41 @@ export default function ProductDetails() {
     return <View style={styles.container}><Text style={styles.notFoundText}>Product not found</Text></View>;
   }
 
+  const carouselImages = getCarouselImages(product?.images, product?.category, product?.name);
+
   return (
     <View style={styles.container}>
       <ScrollView>
+        {/* ── Image Carousel ────────────────────────────────────────── */}
         <View style={styles.carouselContainer}>
-          <Image
-            source={{ uri: getCarouselImages(product?.images, product?.category)[currentImageIndex] }}
-            style={[styles.productImage, { width: screenWidth }]}
-            resizeMode="cover"
-          />
+          <ScrollView
+            ref={scrollViewRef}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            onScroll={handleScroll}
+            scrollEventThrottle={16}
+          >
+            {carouselImages.map((src, idx) => (
+              <Image
+                key={idx}
+                source={src}
+                style={[styles.productImage, { width: screenWidth }]}
+                resizeMode="cover"
+              />
+            ))}
+          </ScrollView>
+          {/* Dot indicators */}
+          {carouselImages.length > 1 && (
+            <View style={styles.dotsContainer}>
+              {carouselImages.map((_, i) => (
+                <View
+                  key={i}
+                  style={[styles.dot, i === currentImageIndex && styles.dotActive]}
+                />
+              ))}
+            </View>
+          )}
         </View>
         <View style={styles.content}>
           <View style={styles.header}>
@@ -173,8 +199,27 @@ const createStyles = (theme: ThemeColors) => StyleSheet.create({
   container: { flex: 1, backgroundColor: theme.background },
   loaderContainer: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: theme.background },
   notFoundText: { color: theme.text, textAlign: "center", marginTop: 40 },
-  carouselContainer: { position: "relative", width: "100%", minHeight: 400 },
-  productImage: { height: 400, minHeight: 400, alignSelf: "stretch" },
+  carouselContainer: { position: "relative", width: "100%" },
+  productImage: { height: 420 },
+  dotsContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    position: "absolute",
+    bottom: 12,
+    left: 0,
+    right: 0,
+    gap: 6,
+  },
+  dot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: "rgba(255,255,255,0.5)",
+  },
+  dotActive: {
+    width: 18,
+    backgroundColor: "#fff",
+  },
   content: { padding: 20 },
   header: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" },
   brand: { fontSize: 16, color: theme.textMuted, marginBottom: 5 },

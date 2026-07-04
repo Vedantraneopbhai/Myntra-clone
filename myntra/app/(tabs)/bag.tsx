@@ -15,7 +15,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
 import { supabase } from "@/utils/supabase";
 import { ThemeColors } from "@/constants/Theme";
-import { getProductImageUrl } from "@/utils/imageUtils";
+import { getProductImageSource } from "@/utils/imageUtils";
 
 export default function Bag() {
   const router = useRouter();
@@ -244,11 +244,13 @@ export default function Bag() {
         {/* Active Items List */}
         {activeItems.map((item) => {
           const product = item.productId || {};
-          const imageUri = getProductImageUrl(product.images, product.category, product._id);
 
           return (
             <View key={item._id} style={[styles.bagItem, item.outOfStock || item.isDiscontinued ? styles.disabledItem : {}]}>
-              <Image source={{ uri: imageUri }} style={styles.itemImage} />
+              <Image
+                source={getProductImageSource(product.name, product.images, product.category, product._id)}
+                style={styles.itemImage}
+              />
               
               <View style={styles.itemInfo}>
                 <View style={styles.itemHeader}>
@@ -340,11 +342,13 @@ export default function Bag() {
             
             {savedItems.map((item) => {
               const product = item.productId || {};
-              const imageUri = getProductImageUrl(product.images, product.category, product._id);
 
               return (
                 <View key={item._id} style={[styles.savedItemCard]}>
-                  <Image source={{ uri: imageUri }} style={styles.savedItemImage} />
+                  <Image
+                    source={getProductImageSource(product.name, product.images, product.category, product._id)}
+                    style={styles.savedItemImage}
+                  />
                   
                   <View style={styles.savedItemInfo}>
                     <View style={styles.itemHeader}>

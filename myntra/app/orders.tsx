@@ -13,7 +13,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
 import { ThemeColors } from "@/constants/Theme";
 
-import { getProductImageUrl } from "@/utils/imageUtils";
+import { getProductImageSource } from "@/utils/imageUtils";
 
 export default function Orders() {
   const router = useRouter();
@@ -97,7 +97,10 @@ export default function Orders() {
             <View style={styles.itemsContainer}>
               {order.items.map((item: any) => (
                 <View key={item._id} style={styles.orderItem}>
-                  <Image source={{ uri: getProductImageUrl(item.productId?.images, item.productId?.category, item.productId?._id) }} style={styles.itemImage} />
+                  <Image
+                    source={getProductImageSource(item.productId?.name, item.productId?.images, item.productId?.category, item.productId?._id)}
+                    style={styles.itemImage}
+                  />
                   <View style={styles.itemInfo}>
                     <Text style={styles.brandName}>{item.productId?.brand || "Brand"}</Text>
                     <Text style={styles.itemName}>{item.productId?.name || "Product Name"}</Text>
